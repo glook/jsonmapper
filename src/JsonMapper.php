@@ -1501,7 +1501,6 @@ class JsonMapper
         $segments = array();
         $alias = null;
         $groupPrefix = '';
-        $inGroup = false;
 
         $tNameQualified = defined('T_NAME_QUALIFIED')
             ? constant('T_NAME_QUALIFIED') : -1;
@@ -1537,7 +1536,6 @@ class JsonMapper
                         $groupPrefix .= '\\';
                     }
                     $segments = array();
-                    $inGroup = true;
                 } elseif ($token === '}') {
                     // Register last item in group
                     if (!empty($segments)) {
@@ -1546,7 +1544,6 @@ class JsonMapper
                             ? $alias : $this->_classShortName($fqn);
                         $imports[$shortName] = '\\' . ltrim($fqn, '\\');
                     }
-                    $inGroup = false;
                     $segments = array();
                     $alias = null;
                 }
