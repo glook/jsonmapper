@@ -104,6 +104,22 @@ class JsonMapper
     protected $arInspectedClasses = array();
 
     /**
+     * Cache of parsed use-import maps, keyed by source file path.
+     * Each entry maps short/aliased class name to its FQN with leading \.
+     *
+     * @var array<string, array<string, string>>
+     */
+    protected $arFileImports = array();
+
+    /**
+     * Current use-import map for the class being processed.
+     * Set before getMappedValue() calls, used by getFullNamespace().
+     *
+     * @var array<string, string>
+     */
+    protected $currentImports = array();
+
+    /**
      * An array of directives from php defined configuration files.
      *
      * @var array|null Array of values from the configuration files.
@@ -247,8 +263,9 @@ class JsonMapper
                     = $this->inspectProperty($rc, $key);
             }
 
-            list($hasProperty, $accessor, $type, $factoryMethod, $mapsBy, $namespace)
-                = $this->arInspectedClasses[$strClassName][$key];
+            list($hasProperty, $accessor, $type, $factoryMethod, $mapsBy,
+                $namespace, $declaringFile)
+                    = $this->arInspectedClasses[$strClassName][$key];
 
             if ($accessor !== null) {
                 $providedProperties[$accessor->getName()] = true;
@@ -303,6 +320,7 @@ class JsonMapper
                 );
                 continue;
             }
+            $this->currentImports = $this->getImportsForFile($declaringFile);
             $value = $this->getMappedValue(
                 $jvalue,
                 $type,
@@ -348,6 +366,9 @@ class JsonMapper
             );
             $mapsBy = $this->getMapByAnnotationFromParsed($annotations);
             $factoryMethods = $this->getFactoryMethods($annotations);
+            $this->currentImports = $this->getImportsForFile(
+                $method->getDeclaringClass()->getFileName()
+            );
             $value = $this->getMappedValue(
                 $value,
                 $type,
@@ -1363,6 +1384,222 @@ class JsonMapper
     }
 
     /**
+     * Get the use-import map for a given source file, with caching.
+     *
+     * @param string|false $filePath Path to the PHP source file
+     *
+     * @return array<string, string> Map of short name => FQN with leading \
+     */
+    protected function getImportsForFile($filePath)
+    {
+        if ($filePath === false || $filePath === null) {
+            return array();
+        }
+        if (!isset($this->arFileImports[$filePath])) {
+            $this->arFileImports[$filePath]
+                = $this->parseUseStatements($filePath);
+        }
+        return $this->arFileImports[$filePath];
+    }
+
+    /**
+     * Parse use-import statements from a PHP source file.
+     *
+     * @param string $filePath Path to the PHP source file
+     *
+     * @return array<string, string> Map of short/aliased name => FQN
+     */
+    protected function parseUseStatements($filePath)
+    {
+        $source = file_get_contents($filePath);
+        if ($source === false) {
+            return array();
+        }
+        $tokens = token_get_all($source);
+        $imports = array();
+        $braceDepth = 0;
+        $count = count($tokens);
+
+        for ($i = 0; $i < $count; $i++) {
+            $token = $tokens[$i];
+
+            // Track brace depth to skip trait-use inside class bodies
+            if (is_string($token)) {
+                if ($token === '{') {
+                    $braceDepth++;
+                } elseif ($token === '}') {
+                    $braceDepth--;
+                }
+                continue;
+            }
+
+            // Only process top-level use statements
+            if ($token[0] !== T_USE || $braceDepth > 0) {
+                continue;
+            }
+
+            // Skip closure use ($var)
+            $next = $this->_nextMeaningfulToken($tokens, $i, $count);
+            if ($next !== false && is_string($tokens[$next])
+                && $tokens[$next] === '('
+            ) {
+                continue;
+            }
+
+            // Skip use function and use const
+            if ($next !== false && is_array($tokens[$next])
+                && ($tokens[$next][0] === T_FUNCTION
+                || $tokens[$next][0] === T_CONST)
+            ) {
+                continue;
+            }
+
+            // Collect names until ;
+            $this->_parseUseStatement($tokens, $i, $count, $imports);
+        }
+
+        return $imports;
+    }
+
+    /**
+     * Find the next non-whitespace, non-comment token index.
+     *
+     * @param array $tokens Token array
+     * @param int   $pos    Current position
+     * @param int   $count  Total token count
+     *
+     * @return int|false Index of next meaningful token, or false
+     */
+    private function _nextMeaningfulToken($tokens, $pos, $count)
+    {
+        for ($j = $pos + 1; $j < $count; $j++) {
+            if (is_array($tokens[$j])
+                && ($tokens[$j][0] === T_WHITESPACE
+                || $tokens[$j][0] === T_COMMENT
+                || $tokens[$j][0] === T_DOC_COMMENT)
+            ) {
+                continue;
+            }
+            return $j;
+        }
+        return false;
+    }
+
+    /**
+     * Parse a single use statement (may contain group imports).
+     *
+     * @param array $tokens  Token array
+     * @param int   $pos     Current position (on T_USE), advanced past ;
+     * @param int   $count   Total token count
+     * @param array $imports Import map to populate
+     *
+     * @return void
+     */
+    private function _parseUseStatement($tokens, &$pos, $count, &$imports)
+    {
+        $pos++; // skip T_USE
+        $segments = array();
+        $alias = null;
+        $groupPrefix = '';
+        $inGroup = false;
+
+        $tNameQualified = defined('T_NAME_QUALIFIED')
+            ? constant('T_NAME_QUALIFIED') : -1;
+        $tNameFullyQualified = defined('T_NAME_FULLY_QUALIFIED')
+            ? constant('T_NAME_FULLY_QUALIFIED') : -1;
+
+        for (; $pos < $count; $pos++) {
+            $token = $tokens[$pos];
+
+            if (is_string($token)) {
+                if ($token === ';') {
+                    // End of use statement — register current name
+                    if (!empty($segments)) {
+                        $fqn = implode('', $segments);
+                        $shortName = $alias !== null
+                            ? $alias : $this->_classShortName($fqn);
+                        $imports[$shortName] = '\\' . ltrim($fqn, '\\');
+                    }
+                    return;
+                } elseif ($token === ',') {
+                    // Register current name, start next
+                    if (!empty($segments)) {
+                        $fqn = $groupPrefix . implode('', $segments);
+                        $shortName = $alias !== null
+                            ? $alias : $this->_classShortName($fqn);
+                        $imports[$shortName] = '\\' . ltrim($fqn, '\\');
+                    }
+                    $segments = array();
+                    $alias = null;
+                } elseif ($token === '{') {
+                    $groupPrefix = implode('', $segments);
+                    if (substr($groupPrefix, -1) !== '\\') {
+                        $groupPrefix .= '\\';
+                    }
+                    $segments = array();
+                    $inGroup = true;
+                } elseif ($token === '}') {
+                    // Register last item in group
+                    if (!empty($segments)) {
+                        $fqn = $groupPrefix . implode('', $segments);
+                        $shortName = $alias !== null
+                            ? $alias : $this->_classShortName($fqn);
+                        $imports[$shortName] = '\\' . ltrim($fqn, '\\');
+                    }
+                    $inGroup = false;
+                    $segments = array();
+                    $alias = null;
+                }
+                continue;
+            }
+
+            // Array token
+            $tokenType = $token[0];
+            $tokenValue = $token[1];
+
+            if ($tokenType === T_WHITESPACE || $tokenType === T_COMMENT
+                || $tokenType === T_DOC_COMMENT
+            ) {
+                continue;
+            }
+
+            if ($tokenType === T_AS) {
+                $alias = '';
+                continue;
+            }
+
+            if ($tokenType === T_STRING
+                || $tokenType === T_NS_SEPARATOR
+                || $tokenType === $tNameQualified
+                || $tokenType === $tNameFullyQualified
+            ) {
+                if ($alias !== null && $alias === '') {
+                    // This is the alias name
+                    $alias = $tokenValue;
+                } else {
+                    $segments[] = $tokenValue;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the short class name from a fully-qualified name.
+     *
+     * @param string $fqn Fully-qualified class name
+     *
+     * @return string Short class name (last segment)
+     */
+    private function _classShortName($fqn)
+    {
+        $pos = strrpos($fqn, '\\');
+        if ($pos !== false) {
+            return substr($fqn, $pos + 1);
+        }
+        return $fqn;
+    }
+
+    /**
      * Convert a type name to a fully namespaced type name.
      *
      * @param string $type  Type name (simple type or class name)
@@ -1373,6 +1610,19 @@ class JsonMapper
     protected function getFullNamespace($type, $strNs)
     {
         if (\is_string($type) && $type !== '' && $type[0] != '\\') {
+            // Check use-import map for exact match
+            if (isset($this->currentImports[$type])) {
+                return $this->currentImports[$type];
+            }
+            // Check partial match for relative types (e.g., "Sub\Class")
+            $firstBackslash = strpos($type, '\\');
+            if ($firstBackslash !== false) {
+                $firstSegment = substr($type, 0, $firstBackslash);
+                if (isset($this->currentImports[$firstSegment])) {
+                    return $this->currentImports[$firstSegment]
+                        . substr($type, $firstBackslash);
+                }
+            }
             //create a full qualified namespace
             if ($strNs != '') {
                 $type = '\\' . $strNs . '\\' . $type;
@@ -1595,7 +1845,11 @@ class JsonMapper
             }
             $type = $this->getDocTypeForArrayOrMixed($type, $annotations);
 
-            return array(true, $rmeth, $type, $factoryMethod, $mapsBy, $namespace);
+            $declaringFile = $rmeth->getDeclaringClass()->getFileName();
+            return array(
+                true, $rmeth, $type, $factoryMethod,
+                $mapsBy, $namespace, $declaringFile
+            );
         }
 
         $rprop = null;
@@ -1641,16 +1895,23 @@ class JsonMapper
                     list($type) = explode(' ', $annotations['var'][0]);
                 }
 
-                return array(true, $rprop, $type, $factoryMethod, $mapsBy,
-                    $namespace);
+                $declaringFile = $rprop->getDeclaringClass()->getFileName();
+                return array(
+                    true, $rprop, $type, $factoryMethod,
+                    $mapsBy, $namespace, $declaringFile
+                );
             } else {
                 //no setter, private property
-                return array(true, null, null, null, $mapsBy, $namespace);
+                $declaringFile = $rprop->getDeclaringClass()->getFileName();
+                return array(
+                    true, null, null, null,
+                    $mapsBy, $namespace, $declaringFile
+                );
             }
         }
 
         //no setter, no property
-        return array(false, null, null, null, $mapsBy, $namespace);
+        return array(false, null, null, null, $mapsBy, $namespace, false);
     }
 
     /**
@@ -1869,8 +2130,9 @@ class JsonMapper
                     = $this->inspectProperty($rc, $key);
             }
 
-            list($hasProperty, $accessor, $type, $factoryMethod, $mapsBy, $namespace)
-                = $this->arInspectedClasses[$class][$key];
+            list($hasProperty, $accessor, $type, $factoryMethod, $mapsBy,
+                $namespace, $declaringFile)
+                    = $this->arInspectedClasses[$class][$key];
 
             if (!$hasProperty) {
                 // if no matching property or setter method found
@@ -1909,6 +2171,7 @@ class JsonMapper
                 $jtype = $ttype;
             }
 
+            $this->currentImports = $this->getImportsForFile($declaringFile);
             $ctorArgs[$rp->getPosition()] = $this->getMappedValue(
                 $jvalue,
                 $jtype,

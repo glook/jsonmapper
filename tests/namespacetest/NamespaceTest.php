@@ -7,10 +7,14 @@ require_once __DIR__ . '/model/Group.php';
 require_once __DIR__ . '/model/UserList.php';
 require_once __DIR__ . '/../othernamespace/Programmers.php';
 require_once __DIR__ . '/../othernamespace/Foo.php';
+require_once __DIR__ . '/model/UserWithImports.php';
+require_once __DIR__ . '/model/UserWithGroupImport.php';
 
 use apimatic\jsonmapper\JsonMapper;
 use apimatic\jsonmapper\JsonMapperException;
 use namespacetest\model\User;
+use namespacetest\model\UserWithImports;
+use namespacetest\model\UserWithGroupImport;
 use othernamespace\Programmers;
 
 /**
@@ -132,5 +136,128 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($res->getUsers()));
         $this->assertEquals('member1', $res->getUsers()[0]->name);
         $this->assertEquals('member2', $res->getUsers()[1]->name);
+    }
+
+    /**
+     * Test that @var DateTime with use DateTime resolves to \DateTime.
+     */
+    public function testUseImportGlobalClass()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"createdAt":"2024-01-15T10:30:00+00:00"}';
+        $res = $mapper->map(
+            json_decode($json), new UserWithImports()
+        );
+        $this->assertInstanceOf('\DateTime', $res->createdAt);
+    }
+
+    /**
+     * Test that @var DateTime|null with null value returns null.
+     */
+    public function testUseImportNullable()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"createdAt":"2024-01-15T10:30:00+00:00","updatedAt":null}';
+        $res = $mapper->map(
+            json_decode($json), new UserWithImports()
+        );
+        $this->assertInstanceOf('\DateTime', $res->createdAt);
+        $this->assertNull($res->updatedAt);
+    }
+
+    /**
+     * Test that @var Foo with use othernamespace\Foo resolves correctly.
+     */
+    public function testUseImportCrossNamespace()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"foo":{"name":"bar"}}';
+        $res = $mapper->map(
+            json_decode($json), new UserWithImports()
+        );
+        $this->assertInstanceOf('\othernamespace\Foo', $res->foo);
+        $this->assertEquals('bar', $res->foo->name);
+    }
+
+    /**
+     * Test that @var AliasedFoo with use ... as AliasedFoo resolves.
+     */
+    public function testUseImportAlias()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"aliasedFoo":{"name":"baz"}}';
+        $res = $mapper->map(
+            json_decode($json), new UserWithImports()
+        );
+        $this->assertInstanceOf('\othernamespace\Foo', $res->aliasedFoo);
+        $this->assertEquals('baz', $res->aliasedFoo->name);
+    }
+
+    /**
+     * Test that @var Foo[] with use othernamespace\Foo resolves array type.
+     */
+    public function testUseImportArray()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"fooArray":[{"name":"a"},{"name":"b"}]}';
+        $res = $mapper->map(
+            json_decode($json), new UserWithImports()
+        );
+        $this->assertCount(2, $res->fooArray);
+        $this->assertInstanceOf('\othernamespace\Foo', $res->fooArray[0]);
+        $this->assertEquals('a', $res->fooArray[0]->name);
+        $this->assertEquals('b', $res->fooArray[1]->name);
+    }
+
+    /**
+     * Test group import syntax: use othernamespace\{Foo, Programmers}.
+     *
+     * @requires PHP 7.0
+     */
+    public function testUseImportGroupSyntax()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"foo":{"name":"grouped"}}';
+        $res = $mapper->map(
+            json_decode($json), new UserWithGroupImport()
+        );
+        $this->assertInstanceOf('\othernamespace\Foo', $res->foo);
+        $this->assertEquals('grouped', $res->foo->name);
+    }
+
+    /**
+     * Test that existing namespace resolution (model\User) still works.
+     */
+    public function testExistingNamespaceResolutionUnchanged()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"user":{"name": "Jane"}}';
+        $res = $mapper->map(json_decode($json), new UnitData());
+        $this->assertInstanceOf('\namespacetest\model\User', $res->user);
+        $this->assertEquals('Jane', $res->user->name);
+    }
+
+    /**
+     * Test that parseUseStatements returns expected import map.
+     */
+    public function testParseUseStatements()
+    {
+        $mapper = new JsonMapper();
+        $rc = new \ReflectionClass(UserWithImports::class);
+        $filePath = $rc->getFileName();
+
+        // Use reflection to call protected method
+        $method = new \ReflectionMethod($mapper, 'parseUseStatements');
+        if (PHP_VERSION_ID < 80100) {
+            $method->setAccessible(true);
+        }
+        $imports = $method->invoke($mapper, $filePath);
+
+        $this->assertArrayHasKey('DateTime', $imports);
+        $this->assertEquals('\DateTime', $imports['DateTime']);
+        $this->assertArrayHasKey('Foo', $imports);
+        $this->assertEquals('\othernamespace\Foo', $imports['Foo']);
+        $this->assertArrayHasKey('AliasedFoo', $imports);
+        $this->assertEquals('\othernamespace\Foo', $imports['AliasedFoo']);
     }
 }
