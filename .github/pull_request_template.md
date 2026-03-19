@@ -17,10 +17,10 @@ Select multiple if applicable.
 - [ ] CI/Build (adds or updates a script, change in external dependencies)
 
 ## Dependency Change
-If a new dependency is being added, please ensure that it adheres to the following guideline https://github.com/apimatic/apimatic-codegen/wiki/Policy-of-adding-new-dependencies-in-the-core-libraries
+If a new dependency is being added, please document the rationale.
 
 ## Breaking change
-If the PR is introducing a breaking change, please ensure that it adheres to the following guideline https://github.com/apimatic/apimatic-codegen/wiki/Guidelines-for-maintaining-core-libraries
+If the PR is introducing a breaking change, please document the migration path.
 
 ## Testing
 List the steps that were taken to test the changes

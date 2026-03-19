@@ -2,7 +2,7 @@
 
 namespace multitypetest;
 
-use apimatic\jsonmapper\JsonMapper;
+use glook\jsonmapper\JsonMapper;
 
 class MultiTypeJsonMapper extends JsonMapper
 {

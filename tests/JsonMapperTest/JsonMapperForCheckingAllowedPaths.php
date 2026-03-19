@@ -1,6 +1,6 @@
 <?php
 
-use apimatic\jsonmapper\JsonMapper;
+use glook\jsonmapper\JsonMapper;
 
 class JsonMapperForCheckingAllowedPaths extends JsonMapper
 {
