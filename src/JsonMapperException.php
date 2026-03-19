@@ -12,7 +12,7 @@
  * @link     http://www.netresearch.de/
  */
 
-namespace apimatic\jsonmapper;
+namespace glook\jsonmapper;
 
 use RuntimeException;
 

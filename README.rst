@@ -2,19 +2,19 @@
 JsonMapper - map nested JSON structures onto PHP classes
 ********************************************************
 
-.. image:: https://img.shields.io/packagist/v/apimatic/jsonmapper.svg?style=flat
-   :target: https://packagist.org/packages/apimatic/jsonmapper
-.. image:: https://img.shields.io/packagist/dm/apimatic/jsonmapper.svg?style=flat
-   :target: https://packagist.org/packages/apimatic/jsonmapper
-.. image:: https://github.com/apimatic/jsonmapper/workflows/Tests/badge.svg
-   :target: https://github.com/apimatic/jsonmapper/actions?query=workflow%3ATests
-.. image:: https://sonarcloud.io/api/project_badges/measure?project=apimatic_jsonmapper&metric=coverage
-   :target: https://sonarcloud.io/summary/new_code?id=apimatic_jsonmapper
-.. image:: https://sonarcloud.io/api/project_badges/measure?project=apimatic_jsonmapper&metric=sqale_rating
-   :target: https://sonarcloud.io/summary/new_code?id=apimatic_jsonmapper
-.. image:: https://sonarcloud.io/api/project_badges/measure?project=apimatic_jsonmapper&metric=vulnerabilities
-   :target: https://sonarcloud.io/summary/new_code?id=apimatic_jsonmapper
-.. image:: https://img.shields.io/packagist/l/apimatic/jsonmapper.svg?style=flat
+.. image:: https://img.shields.io/packagist/v/glook/jsonmapper.svg?style=flat
+   :target: https://packagist.org/packages/glook/jsonmapper
+.. image:: https://img.shields.io/packagist/dm/glook/jsonmapper.svg?style=flat
+   :target: https://packagist.org/packages/glook/jsonmapper
+.. image:: https://github.com/glook/jsonmapper/workflows/Tests/badge.svg
+   :target: https://github.com/glook/jsonmapper/actions?query=workflow%3ATests
+.. image:: https://sonarcloud.io/api/project_badges/measure?project=glook_jsonmapper&metric=coverage
+   :target: https://sonarcloud.io/summary/new_code?id=glook_jsonmapper
+.. image:: https://sonarcloud.io/api/project_badges/measure?project=glook_jsonmapper&metric=sqale_rating
+   :target: https://sonarcloud.io/summary/new_code?id=glook_jsonmapper
+.. image:: https://sonarcloud.io/api/project_badges/measure?project=glook_jsonmapper&metric=vulnerabilities
+   :target: https://sonarcloud.io/summary/new_code?id=glook_jsonmapper
+.. image:: https://img.shields.io/packagist/l/glook/jsonmapper.svg?style=flat
    :target: LICENSE
 
 Takes data retrieved from a JSON__ web service and converts them
@@ -475,7 +475,6 @@ Installation
 
 Supported PHP Versions
 ======================
-- PHP 5.6
 - PHP 7.0
 - PHP 7.1
 - PHP 7.2
@@ -489,9 +488,9 @@ Install the Package
 ============
 From Packagist__::
 
-    $ composer require apimatic/jsonmapper
+    $ composer require glook/jsonmapper
 
-__ https://packagist.org/packages/apimatic/jsonmapper
+__ https://packagist.org/packages/glook/jsonmapper
 
 
 ================
@@ -522,9 +521,11 @@ JsonMapper follows the `PEAR Coding Standards`__.
 __ http://pear.php.net/manual/en/standards.php
 
 
-Author
-======
-`Christian Weiske`__, `Netresearch GmbH & Co KG`__
+Authors
+=======
+- `Christian Weiske`__, `Netresearch GmbH & Co KG`__ (original author)
+- `Andrey Polyakov`__
 
 __ mailto:christian.weiske@netresearch.de
 __ http://www.netresearch.de/
+__ https://github.com/glook

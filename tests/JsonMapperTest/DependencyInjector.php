@@ -1,5 +1,5 @@
 <?php
-class JsonMapperTest_DependencyInjector extends \apimatic\jsonmapper\JsonMapper
+class JsonMapperTest_DependencyInjector extends \glook\jsonmapper\JsonMapper
 {
     /**
      * Create a new object of the given type.

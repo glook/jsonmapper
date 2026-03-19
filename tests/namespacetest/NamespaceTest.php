@@ -10,17 +10,17 @@ require_once __DIR__ . '/../othernamespace/Foo.php';
 require_once __DIR__ . '/model/UserWithImports.php';
 require_once __DIR__ . '/model/UserWithGroupImport.php';
 
-use apimatic\jsonmapper\JsonMapper;
-use apimatic\jsonmapper\JsonMapperException;
+use glook\jsonmapper\JsonMapper;
+use glook\jsonmapper\JsonMapperException;
 use namespacetest\model\User;
 use namespacetest\model\UserWithImports;
 use namespacetest\model\UserWithGroupImport;
 use othernamespace\Programmers;
 
 /**
- * @covers \apimatic\jsonmapper\JsonMapper
- * @covers \apimatic\jsonmapper\TypeCombination
- * @covers \apimatic\jsonmapper\JsonMapperException
+ * @covers \glook\jsonmapper\JsonMapper
+ * @covers \glook\jsonmapper\TypeCombination
+ * @covers \glook\jsonmapper\JsonMapperException
  */
 class NamespaceTest extends \PHPUnit\Framework\TestCase
 {

@@ -38,8 +38,8 @@ if (PHP_VERSION_ID >= 70100) {
     require_once 'JsonMapperTest/Php7_1TypedClass.php';
 }
 
-use apimatic\jsonmapper\JsonMapper;
-use apimatic\jsonmapper\JsonMapperException;
+use glook\jsonmapper\JsonMapper;
+use glook\jsonmapper\JsonMapperException;
 
 /**
  * Unit tests for JsonMapper
@@ -49,11 +49,11 @@ use apimatic\jsonmapper\JsonMapperException;
  * @author   Christian Weiske <christian.weiske@netresearch.de>
  * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
  * @link     http://www.netresearch.de/
- * @covers \apimatic\jsonmapper\JsonMapper
- * @covers \apimatic\jsonmapper\TypeCombination
- * @covers \apimatic\jsonmapper\JsonMapperException
- * @covers \apimatic\jsonmapper\OneOfValidationException
- * @covers \apimatic\jsonmapper\AnyOfValidationException
+ * @covers \glook\jsonmapper\JsonMapper
+ * @covers \glook\jsonmapper\TypeCombination
+ * @covers \glook\jsonmapper\JsonMapperException
+ * @covers \glook\jsonmapper\OneOfValidationException
+ * @covers \glook\jsonmapper\AnyOfValidationException
  */
 class JsonMapperTest extends \PHPUnit\Framework\TestCase
 {

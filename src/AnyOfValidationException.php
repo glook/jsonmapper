@@ -11,7 +11,7 @@
  * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
  * @link     https://www.apimatic.io/
  */
-namespace apimatic\jsonmapper;
+namespace glook\jsonmapper;
 
 /**
  * OneOf Validation Exception.

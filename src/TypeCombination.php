@@ -10,7 +10,7 @@
  * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
  * @link     https://www.apimatic.io/
  */
-namespace apimatic\jsonmapper;
+namespace glook\jsonmapper;
 
 /**
  * Data class to hold the groups of multiple types.

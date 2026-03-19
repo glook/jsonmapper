@@ -27,21 +27,21 @@ require_once __DIR__ . '/model/MonthNumberEnum.php';
 require_once __DIR__ . '/model/Lion.php';
 require_once __DIR__ . '/model/Deer.php';
 
-use apimatic\jsonmapper\JsonMapper;
-use apimatic\jsonmapper\JsonMapperException;
-use apimatic\jsonmapper\OneOfValidationException;
-use apimatic\jsonmapper\AnyOfValidationException;
+use glook\jsonmapper\JsonMapper;
+use glook\jsonmapper\JsonMapperException;
+use glook\jsonmapper\OneOfValidationException;
+use glook\jsonmapper\AnyOfValidationException;
 use multitypetest\model\Atom;
 use multitypetest\model\Car;
 use multitypetest\model\Vehicle;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \apimatic\jsonmapper\JsonMapper
- * @covers \apimatic\jsonmapper\TypeCombination
- * @covers \apimatic\jsonmapper\JsonMapperException
- * @covers \apimatic\jsonmapper\OneOfValidationException
- * @covers \apimatic\jsonmapper\AnyOfValidationException
+ * @covers \glook\jsonmapper\JsonMapper
+ * @covers \glook\jsonmapper\TypeCombination
+ * @covers \glook\jsonmapper\JsonMapperException
+ * @covers \glook\jsonmapper\OneOfValidationException
+ * @covers \glook\jsonmapper\AnyOfValidationException
  */
 class MultiTypeTest extends TestCase
 {

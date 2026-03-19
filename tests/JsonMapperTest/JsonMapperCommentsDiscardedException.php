@@ -1,7 +1,7 @@
 <?php
 
-use apimatic\jsonmapper\JsonMapperException;
-use apimatic\jsonmapper\JsonMapper;
+use glook\jsonmapper\JsonMapperException;
+use glook\jsonmapper\JsonMapper;
 
 class JsonMapperCommentsDiscardedException extends JsonMapper
 {
