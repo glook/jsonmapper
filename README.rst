@@ -8,12 +8,6 @@ JsonMapper - map nested JSON structures onto PHP classes
    :target: https://packagist.org/packages/glook/jsonmapper
 .. image:: https://github.com/glook/jsonmapper/workflows/Tests/badge.svg
    :target: https://github.com/glook/jsonmapper/actions?query=workflow%3ATests
-.. image:: https://sonarcloud.io/api/project_badges/measure?project=glook_jsonmapper&metric=coverage
-   :target: https://sonarcloud.io/summary/new_code?id=glook_jsonmapper
-.. image:: https://sonarcloud.io/api/project_badges/measure?project=glook_jsonmapper&metric=sqale_rating
-   :target: https://sonarcloud.io/summary/new_code?id=glook_jsonmapper
-.. image:: https://sonarcloud.io/api/project_badges/measure?project=glook_jsonmapper&metric=vulnerabilities
-   :target: https://sonarcloud.io/summary/new_code?id=glook_jsonmapper
 .. image:: https://img.shields.io/packagist/l/glook/jsonmapper.svg?style=flat
    :target: LICENSE
 
