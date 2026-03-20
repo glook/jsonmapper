@@ -1,10 +1,11 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 /**
  * @discriminator type
  * @discriminatorType derived2
  */
-class JsonMapperTest_DerivedClass2 extends JsonMapperTest_DerivedClass
+class DerivedClass2 extends DerivedClass
 {
 	public $derived2Field;
 }

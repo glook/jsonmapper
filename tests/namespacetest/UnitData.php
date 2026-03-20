@@ -1,5 +1,5 @@
 <?php
-namespace namespacetest;
+namespace glook\jsonmapper\tests\namespacetest;
 
 class UnitData
 {
@@ -36,9 +36,8 @@ class UnitData
     public $internalData = array();
 
 
-    public function setNamespacedTypeHint(\othernamespace\Foo $foo)
+    public function setNamespacedTypeHint(\glook\jsonmapper\tests\othernamespace\Foo $foo)
     {
         $this->internalData['namespacedTypeHint'] = $foo;
     }
 }
-?>

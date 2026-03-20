@@ -1,6 +1,7 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
-class JsonMapperTest_ValueObject
+class ValueObject
 {
 
     protected $value;

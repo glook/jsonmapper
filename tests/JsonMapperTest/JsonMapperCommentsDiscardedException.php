@@ -1,4 +1,5 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 use glook\jsonmapper\JsonMapperException;
 use glook\jsonmapper\JsonMapper;
@@ -17,4 +18,3 @@ class JsonMapperCommentsDiscardedException extends JsonMapper
         parent::__construct();
     }
 }
-?>

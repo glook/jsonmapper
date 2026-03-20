@@ -1,6 +1,10 @@
 <?php
 namespace glook\jsonmapper\tests\namespacetest\model;
 
-class UserList extends \ArrayObject
+class Project
 {
+
+    /** @var string */
+    public $name;
+
 }

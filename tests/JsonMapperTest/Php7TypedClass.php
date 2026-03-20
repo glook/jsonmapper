@@ -1,6 +1,5 @@
 <?php
-
-require_once 'ValueObject.php';
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 class Php7TypedClass
 {
@@ -21,19 +20,19 @@ class Php7TypedClass
     public function setAge(int $age)
     {
         $this->age = $age;
-    }    
+    }
 
     public function getAge(): int
     {
         return $this->age;
     }
 
-    public function setValue(JsonMapperTest_ValueObject $value)
+    public function setValue(ValueObject $value)
     {
         $this->value = $value;
-    }    
+    }
 
-    public function getValue(): JsonMapperTest_ValueObject
+    public function getValue(): ValueObject
     {
         return $this->value;
     }

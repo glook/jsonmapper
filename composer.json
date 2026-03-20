@@ -7,6 +7,11 @@
       "glook\\jsonmapper\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "glook\\jsonmapper\\tests\\": "tests/"
+    }
+  },
   "authors": [
     {
       "name": "Christian Weiske",

@@ -1,6 +1,6 @@
 <?php
 
-namespace namespacetest\model;
+namespace glook\jsonmapper\tests\namespacetest\model;
 
 class Group
 {

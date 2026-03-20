@@ -1,39 +1,13 @@
 <?php
-namespace multitypetest;
-require_once __DIR__ . '/MultiTypeJsonMapper.php';
-require_once __DIR__ . '/model/SimpleCaseA.php'; // have field value with anyOf("int[]","float[]","bool")
-require_once __DIR__ . '/model/SimpleCaseB.php'; // have field value with oneOf("bool","int[]","array")
-require_once __DIR__ . '/model/ComplexCaseA.php';
-    // have field value with oneOf("DateTime[]",anyOf("DateTime","string"),"ComplexCaseA")
-    // have field optional with oneOf("ComplexCaseA","ComplexCaseB","SimpleCaseA")
-require_once __DIR__ . '/model/ComplexCaseB.php';
-    // have field value with anyOf("Evening[]","Morning[]","Employee","Person[]",oneOf("Vehicle","Car"))
-    // have field optional with anyOf("ComplexCaseA","SimpleCaseB[]","array")
-require_once __DIR__ . '/model/SimpleCase.php';
-require_once __DIR__ . '/model/Person.php';
-require_once __DIR__ . '/model/Employee.php';
-require_once __DIR__ . '/model/Postman.php';
-require_once __DIR__ . '/model/Morning.php';
-require_once __DIR__ . '/model/Evening.php';
-require_once __DIR__ . '/model/Vehicle.php';
-require_once __DIR__ . '/model/Vehicle2.php';
-require_once __DIR__ . '/model/Car.php';
-require_once __DIR__ . '/model/Atom.php';
-require_once __DIR__ . '/model/Orbit.php';
-require_once __DIR__ . '/model/OuterArrayCase.php';
-require_once __DIR__ . '/model/DaysEnum.php';
-require_once __DIR__ . '/model/MonthNameEnum.php';
-require_once __DIR__ . '/model/MonthNumberEnum.php';
-require_once __DIR__ . '/model/Lion.php';
-require_once __DIR__ . '/model/Deer.php';
+namespace glook\jsonmapper\tests\multitypetest;
 
 use glook\jsonmapper\JsonMapper;
 use glook\jsonmapper\JsonMapperException;
 use glook\jsonmapper\OneOfValidationException;
 use glook\jsonmapper\AnyOfValidationException;
-use multitypetest\model\Atom;
-use multitypetest\model\Car;
-use multitypetest\model\Vehicle;
+
+use glook\jsonmapper\tests\multitypetest\model as Models;
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -49,33 +23,33 @@ class MultiTypeTest extends TestCase
     {
         $mapper = new JsonMapper();
         $json = '{"value":[1.2,3.4]}';
-        $res = $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseA');
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseA', $res);
+        $res = $mapper->mapClass(json_decode($json), Models\SimpleCaseA::class);
+        $this->assertInstanceOf(Models\SimpleCaseA::class, $res);
     }
 
     public function testSimpleCaseAWithFieldIntArray()
     {
         $mapper = new JsonMapper();
         $json = '{"value":[1,2]}';
-        $res = $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseA');
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseA', $res);
+        $res = $mapper->mapClass(json_decode($json), Models\SimpleCaseA::class);
+        $this->assertInstanceOf(Models\SimpleCaseA::class, $res);
     }
 
     public function testSimpleCaseAWithFieldBoolean()
     {
         $mapper = new JsonMapper();
         $json = '{"value":true}';
-        $res = $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseA');
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseA', $res);
+        $res = $mapper->mapClass(json_decode($json), Models\SimpleCaseA::class);
+        $this->assertInstanceOf(Models\SimpleCaseA::class, $res);
     }
 
     public function testSimpleCaseAFailWithConstructorArgumentMissing()
     {
         $this->expectException(JsonMapperException::class);
-        $this->expectExceptionMessage('Could not find required constructor arguments for multitypetest\model\SimpleCaseA: value');
+        $this->expectExceptionMessage('Could not find required constructor arguments for glook\jsonmapper\tests\multitypetest\model\SimpleCaseA: value');
         $mapper = new JsonMapper();
         $json = '{"key":true}';
-        $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseA');
+        $mapper->mapClass(json_decode($json), Models\SimpleCaseA::class);
     }
 
     public function testSimpleCaseAFailWithFieldBoolArray()
@@ -84,7 +58,7 @@ class MultiTypeTest extends TestCase
         $this->expectExceptionMessage('We could not match any acceptable type from (int[],float[],bool) on: [false,true]');
         $mapper = new JsonMapper();
         $json = '{"value":[false,true]}';
-        $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseA');
+        $mapper->mapClass(json_decode($json), Models\SimpleCaseA::class);
     }
 
     public function testSimpleCaseAFailWithFieldString()
@@ -93,23 +67,23 @@ class MultiTypeTest extends TestCase
         $this->expectExceptionMessage('We could not match any acceptable type from (int[],float[],bool) on: "some string"');
         $mapper = new JsonMapper();
         $json = '{"value":"some string"}';
-        $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseA');
+        $mapper->mapClass(json_decode($json), Models\SimpleCaseA::class);
     }
 
     public function testSimpleCaseBWithFieldBoolean()
     {
         $mapper = new JsonMapper();
         $json = '{"value":true}';
-        $res = $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseB');
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseB', $res);
+        $res = $mapper->mapClass(json_decode($json), Models\SimpleCaseB::class);
+        $this->assertInstanceOf(Models\SimpleCaseB::class, $res);
     }
 
     public function testSimpleCaseBWithFieldArray()
     {
         $mapper = new JsonMapper();
         $json = '{"value":["some","value"]}';
-        $res = $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseB');
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseB', $res);
+        $res = $mapper->mapClass(json_decode($json), Models\SimpleCaseB::class);
+        $this->assertInstanceOf(Models\SimpleCaseB::class, $res);
     }
 
     public function testSimpleCaseBFailWithFieldIntArray()
@@ -118,7 +92,7 @@ class MultiTypeTest extends TestCase
         $this->expectExceptionMessage('There are more than one matching types i.e. { array and int[] } on: [2,3]');
         $mapper = new JsonMapper();
         $json = '{"value":[2,3]}';
-        $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCaseB');
+        $mapper->mapClass(json_decode($json), Models\SimpleCaseB::class);
     }
 
     public function testStringOrStringList()
@@ -236,41 +210,41 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(Vehicle,Vehicle2)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Vehicle', $res);
+        $this->assertInstanceOf(Models\Vehicle::class, $res);
 
         $json = '{"numberOfTyres":2}';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(Vehicle,Vehicle2)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Vehicle2', $res);
+        $this->assertInstanceOf('\glook\jsonmapper\tests\multitypetest\model\Vehicle2', $res);
 
         $json = '{"value":[2,6]}';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(SimpleCase,SimpleCaseA)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseA', $res);
+        $this->assertInstanceOf(Models\SimpleCaseA::class, $res);
 
         $json = '{"value":["3","2"]}';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(SimpleCase,SimpleCaseA)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\SimpleCase', $res);
+        $this->assertInstanceOf(Models\SimpleCase::class, $res);
     }
 
     public function testMapClassWithoutStrictType()
     {
         $mapper = new JsonMapper();
         $json = '{"numberOfTyres":"2"}';
-        $res = $mapper->mapClass(json_decode($json), '\multitypetest\model\Vehicle2');
-        $this->assertInstanceOf('\multitypetest\model\Vehicle2', $res);
+        $res = $mapper->mapClass(json_decode($json), '\glook\jsonmapper\tests\multitypetest\model\Vehicle2');
+        $this->assertInstanceOf('\glook\jsonmapper\tests\multitypetest\model\Vehicle2', $res);
     }
 
     public function testMapClassWithStrictTypeFail()
@@ -279,15 +253,15 @@ class MultiTypeTest extends TestCase
         $this->expectException(JsonMapperException::class);
         $this->expectExceptionMessage("Could not set type 'int' on value: \"2\"");
         $json = '{"numberOfTyres":"2"}';
-        $mapper->mapClass(json_decode($json), '\multitypetest\model\Vehicle2', true);
+        $mapper->mapClass(json_decode($json), '\glook\jsonmapper\tests\multitypetest\model\Vehicle2', true);
     }
 
     public function testMapClassContainingArrayWithoutStrictType()
     {
         $mapper = new JsonMapper();
         $json = '{"value":[2,6]}';
-        $res = $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCase');
-        $this->assertInstanceOf('\multitypetest\model\SimpleCase', $res);
+        $res = $mapper->mapClass(json_decode($json), Models\SimpleCase::class);
+        $this->assertInstanceOf(Models\SimpleCase::class, $res);
     }
 
     public function testMapClassContainingArrayWithStrictTypeFail()
@@ -296,7 +270,7 @@ class MultiTypeTest extends TestCase
         $this->expectException(JsonMapperException::class);
         $this->expectExceptionMessage("Could not set type 'string' on value: 2");
         $json = '{"value":[2,6]}';
-        $mapper->mapClass(json_decode($json), '\multitypetest\model\SimpleCase', true);
+        $mapper->mapClass(json_decode($json), Models\SimpleCase::class, true);
     }
 
     public function testStringOrSimpleCaseA()
@@ -306,15 +280,15 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(string,SimpleCaseA)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseA', $res);
+        $this->assertInstanceOf(Models\SimpleCaseA::class, $res);
 
         $json = '{"value":[1.2]}';
         $res = $mapper->mapFor(
             $json,
             'oneOf(string,SimpleCaseA)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertEquals('{"value":[1.2]}', $res);
     }
@@ -326,9 +300,9 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(SimpleCaseA,SimpleCaseB)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseB', $res);
+        $this->assertInstanceOf(Models\SimpleCaseB::class, $res);
     }
 
     public function testOneOfSimpleCasesWithFieldArrayAndFloatArrayFail()
@@ -340,7 +314,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'oneOf(SimpleCaseA,SimpleCaseB)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -351,25 +325,25 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(SimpleCaseA,SimpleCaseB)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseA', $res);
+        $this->assertInstanceOf(Models\SimpleCaseA::class, $res);
 
         $json = '{"value":[2.2,3.3]}';
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(SimpleCaseB,SimpleCaseA)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseB', $res);
+        $this->assertInstanceOf(Models\SimpleCaseB::class, $res);
 
         $json = '{"value":["string1","string2"]}';
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(SimpleCaseA,SimpleCaseB)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseB', $res);
+        $this->assertInstanceOf(Models\SimpleCaseB::class, $res);
     }
 
     public function testAnyOfSimpleCasesFailWithFieldString()
@@ -381,7 +355,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'anyOf(SimpleCaseA,SimpleCaseB)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -389,13 +363,12 @@ class MultiTypeTest extends TestCase
     {
         $mapper = new JsonMapper();
         $json = '{"numberOfElectrons":4}';
-        // oneof array of int & Atom (having all int fields)
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(Atom,int[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res);
+        $this->assertInstanceOf(Models\Atom::class, $res);
     }
 
     public function testMapAndObject()
@@ -404,11 +377,10 @@ class MultiTypeTest extends TestCase
         $this->expectException(OneOfValidationException::class);
         $this->expectExceptionMessage('There are more than one matching types i.e. { array<string,int> and Atom } on: {"numberOfElectrons":4}');
         $json = '{"numberOfElectrons":4}';
-        // oneof map of int & Atom (having all int fields)
         $mapper->mapFor(
             json_decode($json),
             'oneOf(Atom,array<string,int>)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -418,11 +390,10 @@ class MultiTypeTest extends TestCase
         $this->expectException(OneOfValidationException::class);
         $this->expectExceptionMessage('There are more than one matching types i.e. { array<string,int>[] and Atom[] } on: [{"numberOfElectrons":4,"numberOfProtons":2}]');
         $json = '[{"numberOfElectrons":4,"numberOfProtons":2}]';
-        // oneof arrayOfmap of int & array of Atom (having all int fields)
         $mapper->mapFor(
             json_decode($json),
             'oneOf(Atom[],array<string,int>[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -433,10 +404,10 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(Atom[],int[][])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[0]);
+        $this->assertInstanceOf(Models\Atom::class, $res[0]);
     }
 
     public function testOneOfObjectsFailWithSameRequiredFields()
@@ -445,46 +416,45 @@ class MultiTypeTest extends TestCase
         $this->expectExceptionMessage('There are more than one matching types i.e. { Orbit and Atom } on: {"numberOfProtons":4,"numberOfElectrons":4}');
         $mapper = new JsonMapper();
         $json = '{"numberOfProtons":4,"numberOfElectrons":4}';
-        // oneof Orbit (did not have # of protons) & Atom (have # of protons optional)
         $mapper->mapFor(
             json_decode($json),
             'oneOf(Atom,Orbit)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
     public function testComplexCases()
     {
         $mapper = new JsonMapper();
-        $mapper->arChildClasses['multitypetest\model\Vehicle'] = [
-            'multitypetest\model\Car',
+        $mapper->arChildClasses['glook\jsonmapper\tests\multitypetest\model\Vehicle'] = [
+            'glook\jsonmapper\tests\multitypetest\model\Car',
         ];
 
         $json = '{"value": "199402-19", "optional": {"value": [23,24]}}';
-        $res = $mapper->mapClass(json_decode($json),'\multitypetest\model\ComplexCaseA');
-        $this->assertInstanceOf('\multitypetest\model\ComplexCaseA', $res);
+        $res = $mapper->mapClass(json_decode($json),Models\ComplexCaseA::class);
+        $this->assertInstanceOf(Models\ComplexCaseA::class, $res);
         $this->assertTrue(is_string($res->getValue()));
-        $this->assertInstanceOf('\multitypetest\model\SimpleCaseA', $res->getOptional());
+        $this->assertInstanceOf(Models\SimpleCaseA::class, $res->getOptional());
         $this->assertTrue(is_int($res->getOptional()->getValue()[0]));
 
         $json = '{"value": "1994-02-12", "optional": {"value": ["1994-02-13","1994-02-14"],
             "optional": {"value": {"numberOfTyres":"4"}, "optional":[234,567]}}}';
-        $res = $mapper->mapClass(json_decode($json),'\multitypetest\model\ComplexCaseA');
-        $this->assertInstanceOf('\multitypetest\model\ComplexCaseA', $res);
+        $res = $mapper->mapClass(json_decode($json),Models\ComplexCaseA::class);
+        $this->assertInstanceOf(Models\ComplexCaseA::class, $res);
         $this->assertInstanceOf('\DateTime', $res->getValue());
-        $this->assertInstanceOf('\multitypetest\model\ComplexCaseA', $res->getOptional());
+        $this->assertInstanceOf(Models\ComplexCaseA::class, $res->getOptional());
         $this->assertInstanceOf('\DateTime', $res->getOptional()->getValue()[0]);
-        $this->assertInstanceOf('\multitypetest\model\ComplexCaseB', $res->getOptional()->getOptional());
-        $this->assertInstanceOf('\multitypetest\model\Vehicle', $res->getOptional()->getOptional()->getValue());
+        $this->assertInstanceOf(Models\ComplexCaseB::class, $res->getOptional()->getOptional());
+        $this->assertInstanceOf(Models\Vehicle::class, $res->getOptional()->getOptional()->getValue());
         $this->assertTrue(is_int($res->getOptional()->getOptional()->getOptional()[0]));
     }
 
     public function testComplexCasesWithDiscriminators()
     {
         $mapper = new JsonMapper();
-        $mapper->arChildClasses['multitypetest\model\Person'] = [
-            'multitypetest\model\Postman',
-            'multitypetest\model\Employee',
+        $mapper->arChildClasses['glook\jsonmapper\tests\multitypetest\model\Person'] = [
+            'glook\jsonmapper\tests\multitypetest\model\Postman',
+            'glook\jsonmapper\tests\multitypetest\model\Employee',
         ];
         $json = '{"value":[{"name":"Shahid Khaliq","age":5147483645,"address":"H # 531, S # 20","uid":"123321",' .
             '"birthday":"1994-02-13","personType":"Per"},{"name":"Shahid Khaliq","age":5147483645,' .
@@ -494,68 +464,68 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(ComplexCaseA,ComplexCaseB)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\ComplexCaseB', $res);
-        $this->assertInstanceOf('\multitypetest\model\Person', $res->getValue()[0]);
-        $this->assertInstanceOf('\multitypetest\model\Person', $res->getValue()[1]);
-        $this->assertInstanceOf('\multitypetest\model\Person', $res->getValue()[2]);
+        $this->assertInstanceOf(Models\ComplexCaseB::class, $res);
+        $this->assertInstanceOf(Models\Person::class, $res->getValue()[0]);
+        $this->assertInstanceOf(Models\Person::class, $res->getValue()[1]);
+        $this->assertInstanceOf(Models\Person::class, $res->getValue()[2]);
 
         $json = '{"name":"Shahid Khaliq","age":5147483645,"address":"H # 531, S # 20","uid":"123321",' .
             '"birthday":"1994-02-13","personType":"Empl"}';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(Employee,Person)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Employee', $res);
+        $this->assertInstanceOf(Models\Employee::class, $res);
 
         $json = '{"name":"Shahid Khaliq","age":5147483645,"address":"H # 531, S # 20","uid":"123321",' .
             '"birthday":"1994-02-13","personType":"Empl"}';
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(Person,Employee)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Employee', $res);
+        $this->assertInstanceOf(Models\Employee::class, $res);
 
         $json = '{"startsAt":"15:00","endsAt":"21:00","sessionType":"Evening"}';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(Evening,Morning)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Evening', $res);
+        $this->assertInstanceOf(Models\Evening::class, $res);
 
         $json = '{"value": [{"startsAt":"15:00","endsAt":"21:00","sessionType":"Evening"},' .
             '{"startsAt":"15:00","endsAt":"21:00","sessionType":"Evening"}]}';
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(ComplexCaseA,ComplexCaseB)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\ComplexCaseB', $res);
-        $this->assertInstanceOf('\multitypetest\model\Evening', $res->getValue()[0]);
-        $this->assertInstanceOf('\multitypetest\model\Evening', $res->getValue()[1]);
+        $this->assertInstanceOf(Models\ComplexCaseB::class, $res);
+        $this->assertInstanceOf(Models\Evening::class, $res->getValue()[0]);
+        $this->assertInstanceOf(Models\Evening::class, $res->getValue()[1]);
 
         $json = '{"value": [{"startsAt":"15:00","endsAt":"21:00","sessionType":"Morning"},' .
             '{"startsAt":"15:00","endsAt":"21:00","sessionType":"Morning"}]}';
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(ComplexCaseA,ComplexCaseB)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\ComplexCaseB', $res);
-        $this->assertInstanceOf('\multitypetest\model\Morning', $res->getValue()[0]);
-        $this->assertInstanceOf('\multitypetest\model\Morning', $res->getValue()[1]);
+        $this->assertInstanceOf(Models\ComplexCaseB::class, $res);
+        $this->assertInstanceOf(Models\Morning::class, $res->getValue()[0]);
+        $this->assertInstanceOf(Models\Morning::class, $res->getValue()[1]);
     }
 
     public function testDiscriminatorsFailWithDiscriminatorMatchesParent()
     {
         $mapper = new JsonMapper();
-        $mapper->arChildClasses['multitypetest\model\Person'] = [
-            'multitypetest\model\Postman',
-            'multitypetest\model\Employee',
+        $mapper->arChildClasses['glook\jsonmapper\tests\multitypetest\model\Person'] = [
+            'glook\jsonmapper\tests\multitypetest\model\Postman',
+            'glook\jsonmapper\tests\multitypetest\model\Employee',
         ];
         $this->expectException(AnyOfValidationException::class);
         $this->expectExceptionMessage('We could not match any acceptable type from (Postman,Employee) on: {"name":"Shahid Khaliq","age":5147483645,"address":"H # 531, S # 20","uid":"123321","birthday":"1994-02-13","personType":"Per"}');
@@ -564,7 +534,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'anyOf(Postman,Employee)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -577,7 +547,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'oneOf(Morning,Evening,array)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -614,11 +584,11 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(array<string,Atom[]>,array<string,Car[]>)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['value']));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['value'][0]);
+        $this->assertInstanceOf(Models\Atom::class, $res['value'][0]);
     }
 
     public function testArrayOfMaps()
@@ -628,7 +598,7 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(array<string,bool>[],array<string,int>[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
@@ -641,12 +611,12 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(array<string,Atom>[],array<string,Car>[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[0]['atom1']);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[0]['atom2']);
+        $this->assertInstanceOf(Models\Atom::class, $res[0]['atom1']);
+        $this->assertInstanceOf(Models\Atom::class, $res[0]['atom2']);
     }
 
     public function testMultiDimensionalMaps()
@@ -656,7 +626,7 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(array<string,array<string,bool>>,array<string,array<string,int>>)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['key0']));
@@ -669,12 +639,12 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(array<string,array<string,Atom>>,array<string,array<string,Car>>)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['key']));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['key']['atom1']);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['key']['atom2']);
+        $this->assertInstanceOf(Models\Atom::class, $res['key']['atom1']);
+        $this->assertInstanceOf(Models\Atom::class, $res['key']['atom2']);
     }
 
     public function testMultiDimensionalArrays()
@@ -684,7 +654,7 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(bool[][],int[][])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
@@ -696,13 +666,13 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(Atom[][],Car[][])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
         $this->assertTrue(is_array($res[1]));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[0][0]);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[1][0]);
+        $this->assertInstanceOf(Models\Atom::class, $res[0][0]);
+        $this->assertInstanceOf(Models\Atom::class, $res[1][0]);
     }
 
     public function testOuterArrayInModelField()
@@ -711,9 +681,9 @@ class MultiTypeTest extends TestCase
         $json = '{"value":[true,[1,2],"abc"]}';
         $res = $mapper->mapClass(
             json_decode($json),
-            '\multitypetest\model\OuterArrayCase'
+            Models\OuterArrayCase::class
         );
-        $this->assertInstanceOf('\multitypetest\model\OuterArrayCase', $res);
+        $this->assertInstanceOf(Models\OuterArrayCase::class, $res);
     }
 
     public function testOuterArray()
@@ -723,11 +693,11 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(bool,Atom)[]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue($res[0] === true);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[1]);
+        $this->assertInstanceOf(Models\Atom::class, $res[1]);
         $this->assertTrue($res[2] === false);
     }
 
@@ -738,11 +708,11 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,oneOf(bool,Atom)>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue($res['key1'] === true);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['key2']);
+        $this->assertInstanceOf(Models\Atom::class, $res['key2']);
         $this->assertTrue($res['key3'] === false);
     }
 
@@ -753,24 +723,24 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,oneOf(Atom,Car)[]>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['value']));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['value'][0]);
-        $this->assertInstanceOf('\multitypetest\model\Car', $res['value'][1]);
+        $this->assertInstanceOf(Models\Atom::class, $res['value'][0]);
+        $this->assertInstanceOf(Models\Car::class, $res['value'][1]);
 
         $json = '{"value":[[[{"numberOfElectrons":4}]],[[true,true],[false,true]]]}';
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,oneOf(Atom[][],bool[][])[]>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['value']));
         $this->assertTrue(is_array($res['value'][0]));
         $this->assertTrue(is_array($res['value'][0][0]));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['value'][0][0][0]);
+        $this->assertInstanceOf(Models\Atom::class, $res['value'][0][0][0]);
         $this->assertTrue(is_array($res['value'][1]));
         $this->assertTrue(is_array($res['value'][1][0]));
         $this->assertTrue(is_bool($res['value'][1][0][0]));
@@ -781,7 +751,7 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,anyOf(bool,oneOf(int,Atom)[],string)[]>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['key0']));
@@ -790,7 +760,7 @@ class MultiTypeTest extends TestCase
         $this->assertTrue($res['key1'][0] === 'beta');
         $this->assertTrue(is_array($res['key1'][1]));
         $this->assertTrue($res['key1'][1][0] === 12);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['key1'][1][1]);
+        $this->assertInstanceOf(Models\Atom::class, $res['key1'][1][1]);
         $this->assertTrue(is_array($res['key2']));
         $this->assertTrue($res['key2'][0] === false);
     }
@@ -802,24 +772,24 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,oneOf(Atom,Car)>[]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[0]['key0']);
-        $this->assertInstanceOf('\multitypetest\model\Car', $res[0]['key1']);
+        $this->assertInstanceOf(Models\Atom::class, $res[0]['key0']);
+        $this->assertInstanceOf(Models\Car::class, $res[0]['key1']);
 
         $json = '[{"key0":[[{"numberOfElectrons":4}]],"key1":[[true,true],[false,true]]}]';
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,oneOf(Atom[][],bool[][])>[]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
         $this->assertTrue(is_array($res[0]['key0']));
         $this->assertTrue(is_array($res[0]['key0'][0]));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[0]['key0'][0][0]);
+        $this->assertInstanceOf(Models\Atom::class, $res[0]['key0'][0][0]);
         $this->assertTrue(is_array($res[0]['key1']));
         $this->assertTrue(is_array($res[0]['key1'][0]));
         $this->assertTrue(is_bool($res[0]['key1'][0][0]));
@@ -830,7 +800,7 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,anyOf(bool,oneOf(int,Atom)[],string)>[]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
@@ -840,7 +810,7 @@ class MultiTypeTest extends TestCase
         $this->assertTrue($res[1]['key0'] === 'beta');
         $this->assertTrue(is_array($res[1]['key1']));
         $this->assertTrue($res[1]['key1'][0] === 12);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[1]['key1'][1]);
+        $this->assertInstanceOf(Models\Atom::class, $res[1]['key1'][1]);
         $this->assertTrue(is_array($res[1]['key2']));
         $this->assertTrue($res[1]['key2'][0] === 1);
         $this->assertTrue(is_array($res[2]));
@@ -855,24 +825,24 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,array<string,oneOf(Atom,Car)>>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['item']));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['item']['key0']);
-        $this->assertInstanceOf('\multitypetest\model\Car', $res['item']['key1']);
+        $this->assertInstanceOf(Models\Atom::class, $res['item']['key0']);
+        $this->assertInstanceOf(Models\Car::class, $res['item']['key1']);
 
         $json = '{"item":{"key0":[[{"numberOfElectrons":4}]],"key1":[[true,true],[false,true]]}}';
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,array<string,oneOf(Atom[][],bool[][])>>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['item']));
         $this->assertTrue(is_array($res['item']['key0']));
         $this->assertTrue(is_array($res['item']['key0'][0]));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['item']['key0'][0][0]);
+        $this->assertInstanceOf(Models\Atom::class, $res['item']['key0'][0][0]);
         $this->assertTrue(is_array($res['item']['key1']));
         $this->assertTrue(is_array($res['item']['key1'][0]));
         $this->assertTrue(is_bool($res['item']['key1'][0][0]));
@@ -883,7 +853,7 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,array<string,anyOf(bool,oneOf(int,Atom)[],string)>>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res['item0']));
@@ -893,7 +863,7 @@ class MultiTypeTest extends TestCase
         $this->assertTrue($res['item1']['key0'] === 'beta');
         $this->assertTrue(is_array($res['item1']['key1']));
         $this->assertTrue($res['item1']['key1'][0] === 12);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res['item1']['key1'][1]);
+        $this->assertInstanceOf(Models\Atom::class, $res['item1']['key1'][1]);
         $this->assertTrue(is_array($res['item1']['key2']));
         $this->assertTrue($res['item1']['key2'][0] === 1);
         $this->assertTrue(is_array($res['item2']));
@@ -908,24 +878,24 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(Atom,Car)[][]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[0][0]);
-        $this->assertInstanceOf('\multitypetest\model\Car', $res[0][1]);
+        $this->assertInstanceOf(Models\Atom::class, $res[0][0]);
+        $this->assertInstanceOf(Models\Car::class, $res[0][1]);
 
         $json = '[[[[{"numberOfElectrons":4}]],[[true,true],[false,true]]]]';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf(Atom[][],bool[][])[][]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
         $this->assertTrue(is_array($res[0][0]));
         $this->assertTrue(is_array($res[0][0][0]));
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[0][0][0][0]);
+        $this->assertInstanceOf(Models\Atom::class, $res[0][0][0][0]);
         $this->assertTrue(is_array($res[0][1]));
         $this->assertTrue(is_array($res[0][1][0]));
         $this->assertTrue(is_bool($res[0][1][0][0]));
@@ -936,7 +906,7 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(bool,oneOf(int,Atom)[],string)[][]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_array($res[0]));
@@ -945,7 +915,7 @@ class MultiTypeTest extends TestCase
         $this->assertTrue($res[1][0] === 'beta');
         $this->assertTrue(is_array($res[1][1]));
         $this->assertTrue($res[1][1][0] === 12);
-        $this->assertInstanceOf('\multitypetest\model\Atom', $res[1][1][1]);
+        $this->assertInstanceOf(Models\Atom::class, $res[1][1][1]);
         $this->assertTrue(is_array($res[2]));
         $this->assertTrue($res[2][0] === false);
     }
@@ -960,7 +930,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'anyOf(float[],anyOf(bool,oneOf(int,Atom)[],string)[][])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -973,7 +943,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'oneOf(array<string,array<string,array<string,int>>>,array<string,array<string,anyOf(bool,array<string,oneOf(int,Atom)>,string)>>)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -987,7 +957,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'array<string,anyOf(bool,oneOf(int,Atom)[],string)[]>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -1001,7 +971,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'array<string,anyOf(bool,oneOf(int,Atom)[],string)[]>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -1015,7 +985,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'array<string,array<string,anyOf(bool,oneOf(int,Atom)[],string)>>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -1029,7 +999,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'array<string,array<string,anyOf(bool,oneOf(int,Atom)[],string)>>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -1040,23 +1010,23 @@ class MultiTypeTest extends TestCase
         $this->assertTrue(is_string($res));
         $this->assertEquals("this is string", $res);
 
-        $res = $mapper->checkTypeGroupFor('oneof(Car,Atom)', new Car("3", true));
-        $this->assertInstanceOf(Car::class, $res);
+        $res = $mapper->checkTypeGroupFor('oneof(Car,Atom)', new Models\Car("3", true));
+        $this->assertInstanceOf(Models\Car::class, $res);
 
         $res = $mapper->checkTypeGroupFor('oneof(Car,Atom)[]', [
-            new Car("3", true),
-            new Atom(34)
+            new Models\Car("3", true),
+            new Models\Atom(34)
         ]);
-        $this->assertInstanceOf(Car::class, $res[0]);
-        $this->assertInstanceOf(Atom::class, $res[1]);
+        $this->assertInstanceOf(Models\Car::class, $res[0]);
+        $this->assertInstanceOf(Models\Atom::class, $res[1]);
 
         $res = $mapper->checkTypeGroupFor('oneof(int,DaysEnum)', "Monday", [
-            'multitypetest\model\DaysEnum::checkValue DaysEnum'
+            'glook\jsonmapper\tests\multitypetest\model\DaysEnum::checkValue DaysEnum'
         ]);
         $this->assertEquals("Monday", $res);
 
         $res = $mapper->checkTypeGroupFor('oneof(int,DaysEnum)[]', ["Monday", "Tuesday"], [
-            'multitypetest\model\DaysEnum::checkValue DaysEnum[]'
+            'glook\jsonmapper\tests\multitypetest\model\DaysEnum::checkValue DaysEnum[]'
         ]);
         $this->assertTrue(is_array($res));
         $this->assertEquals("Monday", $res[0]);
@@ -1066,32 +1036,32 @@ class MultiTypeTest extends TestCase
         $this->assertTrue(is_null($res));
 
         $res = $mapper->checkTypeGroupFor('anyof(string,DateTime)[]', [null, null], [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
         ]);
         $this->assertTrue(is_array($res));
         $this->assertTrue(is_null($res[0]));
         $this->assertTrue(is_null($res[1]));
 
         $res = $mapper->checkTypeGroupFor('anyof(string,DateTime)[]', ["some string"], [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTimeArray DateTime[]'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTimeArray DateTime[]'
         ]);
         $this->assertTrue(is_array($res));
         $this->assertEquals("some string", $res[0]);
 
         $res = $mapper->checkTypeGroupFor('oneof(string,DateTime)[]', [new \DateTime("2022-06-10")], [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTimeArray DateTime[]'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTimeArray DateTime[]'
         ]);
         $this->assertTrue(is_array($res));
         $this->assertEquals('Fri, 10 Jun 2022 00:00:00 GMT', $res[0]);
 
         $res = $mapper->checkTypeGroupFor('oneof(string,DateTime)[]', [new \DateTime("2022-06-10")], [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
         ]);
         $this->assertTrue(is_array($res));
         $this->assertEquals('Fri, 10 Jun 2022 00:00:00 GMT', $res[0]);
 
         $res = $mapper->checkTypeGroupFor('oneof(DateTime,null)', null, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
         ]);
         $this->assertTrue(is_null($res));
     }
@@ -1101,7 +1071,7 @@ class MultiTypeTest extends TestCase
         $this->expectExceptionMessage("Unable to map Type: Vehicle on: oneof(Atom,Car)");
         $mapper = new JsonMapper();
 
-        $mapper->checkTypeGroupFor('oneof(Atom,Car)', new Vehicle("6"));
+        $mapper->checkTypeGroupFor('oneof(Atom,Car)', new Models\Vehicle("6"));
     }
 
     public function testCheckTypeGroupFailure2() {
@@ -1110,7 +1080,7 @@ class MultiTypeTest extends TestCase
         $mapper = new JsonMapper();
 
         $mapper->checkTypeGroupFor('oneof(int,DaysEnum)[]', ["Monday", "string"], [
-            'multitypetest\model\DaysEnum::checkValue DaysEnum'
+            'glook\jsonmapper\tests\multitypetest\model\DaysEnum::checkValue DaysEnum'
         ]);
     }
 
@@ -1167,17 +1137,17 @@ class MultiTypeTest extends TestCase
         $mapper = new MultiTypeJsonMapper();
         $value = new \DateTime();
         $this->assertEquals('DateTime', $mapper->getType($value));
-        $value = new Car("3", true);
+        $value = new Models\Car("3", true);
         $this->assertEquals('Car', $mapper->getType($value));
         $value = [new \DateTime(), new \DateTime()];
         $this->assertEquals('DateTime[]', $mapper->getType($value));
-        $value = [new Car("3", true), new \DateTime()];
+        $value = [new Models\Car("3", true), new \DateTime()];
         $this->assertEquals('(Car,DateTime)[]', $mapper->getType($value));
-        $value = [new Car("3", true), true, new Car("6", false)];
+        $value = [new Models\Car("3", true), true, new Models\Car("6", false)];
         $this->assertEquals('(Car,bool)[]', $mapper->getType($value));
-        $value = ["key1" => true, "key2" => new Car("6", false)];
+        $value = ["key1" => true, "key2" => new Models\Car("6", false)];
         $this->assertEquals('array<string,(Car,bool)>', $mapper->getType($value));
-        $value = [new Car("3", true), new Atom(6), null];
+        $value = [new Models\Car("3", true), new Models\Atom(6), null];
         $this->assertEquals('(Atom,Car,null)[]', $mapper->getType($value));
     }
 
@@ -1190,8 +1160,8 @@ class MultiTypeTest extends TestCase
         // a value that did not require factory methods
         $value = "this is string";
         $this->assertEquals('string', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toSimpleDate DateTime',
-            'multitypetest\model\DateTimeHelper::toSimpleDateArray DateTime[]'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDate DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDateArray DateTime[]'
         ]));
         $this->assertTrue(is_string($value));
         $this->assertEquals("this is string", $value);
@@ -1199,8 +1169,8 @@ class MultiTypeTest extends TestCase
         // a string value that is also an enum
         $value = "Friday";
         $this->assertEquals('(DaysEnum,string)', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toSimpleDate DateTime',
-            'multitypetest\model\DaysEnum::checkValue DaysEnum'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDate DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DaysEnum::checkValue DaysEnum'
         ]));
         $this->assertTrue(is_string($value));
         $this->assertEquals("Friday", $value);
@@ -1208,8 +1178,8 @@ class MultiTypeTest extends TestCase
         // a string value that can be in 2 Enums
         $value = "December";
         $this->assertEquals('(DaysEnum,MonthNameEnum,string)', $mapper->getType($value, [
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
-            'multitypetest\model\DaysEnum::checkValue DaysEnum'
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
+            'glook\jsonmapper\tests\multitypetest\model\DaysEnum::checkValue DaysEnum'
         ]));
         $this->assertTrue(is_string($value));
         $this->assertEquals("December", $value);
@@ -1217,8 +1187,8 @@ class MultiTypeTest extends TestCase
         // an int value that can be also be an Enum
         $value = 12;
         $this->assertEquals('(MonthNumberEnum,int)', $mapper->getType($value, [
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
-            'multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum'
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum'
         ]));
         $this->assertTrue(is_int($value));
         $this->assertEquals(12, $value);
@@ -1226,8 +1196,8 @@ class MultiTypeTest extends TestCase
         // an int array which can also be Enum array
         $value = [12,1];
         $this->assertEquals('(((MonthNumberEnum[],int))[],MonthNumberEnum[])', $mapper->getType($value, [
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
-            'multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum[]'
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum[]'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals(12, $value[0]);
@@ -1236,8 +1206,8 @@ class MultiTypeTest extends TestCase
         // an int 2D array which can also be Enum 2D array
         $value = [[12,1]];
         $this->assertEquals('(((((MonthNumberEnum[][],int))[],MonthNumberEnum[][]))[],MonthNumberEnum[][])', $mapper->getType($value, [
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
-            'multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum[][]'
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum[][]'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertTrue(is_array($value[0]));
@@ -1247,8 +1217,8 @@ class MultiTypeTest extends TestCase
         // an int array whose inner values can be also be Enum
         $value = [12,1];
         $this->assertEquals('(((MonthNumberEnum,int))[],MonthNumberEnum)', $mapper->getType($value, [
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
-            'multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum'
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals(12, $value[0]);
@@ -1257,8 +1227,8 @@ class MultiTypeTest extends TestCase
         // an array whose inner values can be also be Enum
         $value = [12,"1"];
         $this->assertEquals('((MonthNumberEnum,int),string)[]', $mapper->getType($value, [
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
-            'multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum'
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals(12, $value[0]);
@@ -1267,8 +1237,8 @@ class MultiTypeTest extends TestCase
         // an array whose inner values can be also be Enum of 2 types
         $value = [12,"January"];
         $this->assertEquals('((MonthNameEnum,string),(MonthNumberEnum,int))[]', $mapper->getType($value, [
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
-            'multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum'
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNumberEnum::checkValue MonthNumberEnum'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals(12, $value[0]);
@@ -1278,18 +1248,16 @@ class MultiTypeTest extends TestCase
         // mapped by first one
         $value = new \DateTime("2022-06-10");
         $this->assertEquals('DateTime', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toSimpleDate DateTime',
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDate DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
         ]));
         $this->assertTrue(is_string($value));
         $this->assertEquals("2022-06-10", $value);
 
-        // a type that require factory methods, can be mapped by both factory methods
-        // mapped by first one
         $value = new \DateTime("2022-06-10");
         $this->assertEquals('DateTime', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
-            'multitypetest\model\DateTimeHelper::toSimpleDate DateTime'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDate DateTime'
         ]));
         $this->assertTrue(is_string($value));
         $this->assertEquals("Fri, 10 Jun 2022 00:00:00 GMT", $value);
@@ -1297,8 +1265,8 @@ class MultiTypeTest extends TestCase
         // a datetime array, whose inner items can be mapped by both factory methods, mapped by first one
         $value = [new \DateTime("2022-06-10"), new \DateTime("2022-06-10")];
         $this->assertEquals('DateTime[]', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toSimpleDate DateTime',
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDate DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertTrue(is_string($value[0]));
@@ -1307,19 +1275,17 @@ class MultiTypeTest extends TestCase
         // a datetime array, can be mapped by both factory methods
         $value = [new \DateTime("2022-06-10"), new \DateTime("2022-06-10")];
         $this->assertEquals('DateTime[]', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTimeArray DateTime[]',
-            'multitypetest\model\DateTimeHelper::toSimpleDateArray DateTime[]'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTimeArray DateTime[]',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDateArray DateTime[]'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals("Fri, 10 Jun 2022 00:00:00 GMT", $value[0]);
         $this->assertEquals("Fri, 10 Jun 2022 00:00:00 GMT", $value[1]);
 
-        // a datetime array, inner item can be mapped by 1st factory method, while
-        // outer array will be mapped by 2nd factory method
         $value = [new \DateTime("2022-06-10"), new \DateTime("2022-06-10")];
         $this->assertEquals('DateTime[]', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
-            'multitypetest\model\DateTimeHelper::toSimpleDateArray DateTime[]'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDateArray DateTime[]'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals("2022-06-10", $value[0]);
@@ -1328,19 +1294,18 @@ class MultiTypeTest extends TestCase
         // a datetime mixed array
         $value = [new \DateTime("2022-06-10"), ["key" => new \DateTime("2022-06-10")]];
         $this->assertEquals('((DateTime[],array<string,DateTime>),DateTime)[]', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
-            'multitypetest\model\DateTimeHelper::toSimpleDateArray DateTime[]'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDateArray DateTime[]'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals("Fri, 10 Jun 2022 00:00:00 GMT", $value[0]);
         $this->assertTrue(is_array($value[1]));
         $this->assertEquals("Fri, 10 Jun 2022 00:00:00 GMT", $value[1]["key"]);
 
-        // a datetime mixed array,
         $value = [new \DateTime("2022-06-10"), ["key" => new \DateTime("2022-06-10")]];
         $this->assertEquals('(DateTime,array<string,DateTime>)[]', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
-            'multitypetest\model\DateTimeHelper::toSimpleDateArray array<string,DateTime>'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toSimpleDateArray array<string,DateTime>'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals("Fri, 10 Jun 2022 00:00:00 GMT", $value[0]);
@@ -1350,8 +1315,8 @@ class MultiTypeTest extends TestCase
         // a datetime and enum array
         $value = [new \DateTime("2022-06-10"), "December"];
         $this->assertEquals('((MonthNameEnum,string),DateTime)[]', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertEquals("Fri, 10 Jun 2022 00:00:00 GMT", $value[0]);
@@ -1360,15 +1325,15 @@ class MultiTypeTest extends TestCase
         // a datetime and enum null value
         $value = null;
         $this->assertEquals('(DateTime,MonthNameEnum,null)', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum'
         ]));
         $this->assertTrue(is_null($value));
 
         // a datetime null values array
         $value = [null,null];
         $this->assertEquals('((DateTime,null))[]', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertTrue(is_null($value[0]));
@@ -1377,8 +1342,8 @@ class MultiTypeTest extends TestCase
         // a datetime and enum null mix array
         $value = [null,"some string"];
         $this->assertEquals('((DateTime,MonthNameEnum,null),string)[]', $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
-            'multitypetest\model\MonthNameEnum::checkValue MonthNameEnum'
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTime DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\MonthNameEnum::checkValue MonthNameEnum'
         ]));
         $this->assertTrue(is_array($value));
         $this->assertTrue(is_null($value[0]));
@@ -1391,11 +1356,11 @@ class MultiTypeTest extends TestCase
     public function testGetTypeFailure()
     {
         $this->expectException(JsonMapperException::class);
-        $this->expectExceptionMessage("Provided factory methods are not callable with the value of Type: DateTime\nmultitypetest\model\DateTimeHelper::toRfc1123DateTimeArray: ");
+        $this->expectExceptionMessage("Provided factory methods are not callable with the value of Type: DateTime\nglook\\jsonmapper\\tests\\multitypetest\\model\\DateTimeHelper::toRfc1123DateTimeArray: ");
         $mapper = new MultiTypeJsonMapper();
         $value = new \DateTime();
         $mapper->getType($value, [
-            'multitypetest\model\DateTimeHelper::toRfc1123DateTimeArray DateTime',
+            'glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::toRfc1123DateTimeArray DateTime',
         ]);
     }
 
@@ -1459,17 +1424,17 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter},Deer{Hunted})',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Lion', $res);
+        $this->assertInstanceOf(Models\Lion::class, $res);
 
         $json = '{"run":true,"kind":"Hunted"}';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{kind}(Lion{Hunter},Deer{Hunted})',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res);
+        $this->assertInstanceOf(Models\Deer::class, $res);
     }
 
     public function testDiscriminatorOneOf_SimpleCases_Failure()
@@ -1481,7 +1446,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'oneOf{kind}(Lion{Hunter},Deer{Hunted})',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -1492,21 +1457,21 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter}[],Deer{Hunted}[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res[0]);
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res[1]);
+        $this->assertInstanceOf(Models\Deer::class, $res[0]);
+        $this->assertInstanceOf(Models\Deer::class, $res[1]);
 
         $json = '{"key1":{"run":true,"type":"Hunter"},"key2":{"run":true,"type":"Hunter"}}';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(array<string,Lion{Hunter}>,array<string,Deer{Hunted}>)',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
-        $this->assertInstanceOf('\multitypetest\model\Lion', $res['key1']);
-        $this->assertInstanceOf('\multitypetest\model\Lion', $res['key2']);
+        $this->assertInstanceOf(Models\Lion::class, $res['key1']);
+        $this->assertInstanceOf(Models\Lion::class, $res['key2']);
     }
 
     public function testDiscriminatorOneOf_InnerArrayCases_Failure()
@@ -1518,7 +1483,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter}[],Deer{Hunted}[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -1529,21 +1494,21 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter},Deer{Hunted})[]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
-        $this->assertInstanceOf('\multitypetest\model\Lion', $res[0]);
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res[1]);
+        $this->assertInstanceOf(Models\Lion::class, $res[0]);
+        $this->assertInstanceOf(Models\Deer::class, $res[1]);
 
         $json = '{"key1":{"run":true,"type":"Hunter"},"key2":{"run":true,"type":"Hunted"}}';
         $res = $mapper->mapFor(
             json_decode($json),
             'array<string,oneOf{type}(Lion{Hunter},Deer{Hunted})>',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
-        $this->assertInstanceOf('\multitypetest\model\Lion', $res['key1']);
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res['key2']);
+        $this->assertInstanceOf(Models\Lion::class, $res['key1']);
+        $this->assertInstanceOf(Models\Deer::class, $res['key2']);
     }
 
     public function testDiscriminatorOneOf_OuterArrayCases_Failure()
@@ -1555,7 +1520,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter},Deer{Hunted})[]',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -1566,21 +1531,21 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(oneOf{type}(Lion{Hunter},Deer{Hunted})[],oneOf{kind}(Lion{Big},Deer{Small})[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res[0]);
-        $this->assertInstanceOf('\multitypetest\model\Lion', $res[1]);
+        $this->assertInstanceOf(Models\Deer::class, $res[0]);
+        $this->assertInstanceOf(Models\Lion::class, $res[1]);
 
         $json = '[{"run":true,"type":"Hunter","kind":"Small"},{"run":true,"type":"Hunted","kind":"Big"}]';
         $res = $mapper->mapFor(
             json_decode($json),
             'anyOf(oneOf{type}(Lion{Hunter},Deer{Hunted})[],oneOf{kind}(Lion{Big},Deer{Small})[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
-        $this->assertInstanceOf('\multitypetest\model\Lion', $res[0]);
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res[1]);
+        $this->assertInstanceOf(Models\Lion::class, $res[0]);
+        $this->assertInstanceOf(Models\Deer::class, $res[1]);
     }
 
     public function testDiscriminatorOneOf_MultiLevel_Failure()
@@ -1596,7 +1561,7 @@ class MultiTypeTest extends TestCase
         $mapper->mapFor(
             json_decode($json),
             'oneOf(oneOf{type}(Lion{Hunter},Deer{Hunted})[],oneOf{kind}(Lion{Big},Deer{Small})[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
     }
 
@@ -1611,19 +1576,19 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter},Deer{Val1})',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res);
+        $this->assertInstanceOf(Models\Deer::class, $res);
 
         $json = '[{"run":true},{"run":true,"type":"This, is a value >)]} $#@** %20"}]';
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter}[],Deer{Val2}[])',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
         $this->assertTrue(is_array($res));
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res[0]);
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res[1]);
+        $this->assertInstanceOf(Models\Deer::class, $res[0]);
+        $this->assertInstanceOf(Models\Deer::class, $res[1]);
     }
 
     public function testDiscriminatorOneOf_EdgeCase_SpecialCharsInDiscField()
@@ -1636,9 +1601,9 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter},Deer{Hunted})',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res);
+        $this->assertInstanceOf(Models\Deer::class, $res);
     }
 
     public function testDiscriminatorOneOf_EdgeCase_OafFormatInDiscValue()
@@ -1651,8 +1616,8 @@ class MultiTypeTest extends TestCase
         $res = $mapper->mapFor(
             json_decode($json),
             'oneOf{type}(Lion{Hunter},Deer{Hunted})',
-            'multitypetest\model'
+            'glook\jsonmapper\tests\multitypetest\model'
         );
-        $this->assertInstanceOf('\multitypetest\model\Deer', $res);
+        $this->assertInstanceOf(Models\Deer::class, $res);
     }
 }

@@ -1,9 +1,9 @@
 <?php
-namespace namespacetest\model;
+namespace glook\jsonmapper\tests\namespacetest\model;
 
 use DateTime;
-use othernamespace\Foo;
-use othernamespace\Foo as AliasedFoo;
+use glook\jsonmapper\tests\othernamespace\Foo;
+use glook\jsonmapper\tests\othernamespace\Foo as AliasedFoo;
 
 class UserWithImports
 {
@@ -13,7 +13,7 @@ class UserWithImports
     /** @var DateTime|null */
     public $updatedAt;
 
-    /** @var Foo */
+    /** @var \glook\jsonmapper\tests\othernamespace\Foo */
     public $foo;
 
     /** @var AliasedFoo */
@@ -21,4 +21,9 @@ class UserWithImports
 
     /** @var Foo[] */
     public $fooArray;
+
+
+    /** @var Project */
+    public $project;
+
 }

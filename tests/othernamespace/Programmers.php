@@ -1,8 +1,8 @@
 <?php
 
-namespace othernamespace;
+namespace glook\jsonmapper\tests\othernamespace;
 
-use namespacetest\model\Group;
+use glook\jsonmapper\tests\namespacetest\model\Group;
 
 class Programmers extends Group
 {
@@ -14,7 +14,7 @@ class Programmers extends Group
 
     /**
      * @maps languageUser
-     * @var \namespacetest\model\User
+     * @var \glook\jsonmapper\tests\namespacetest\model\User
      */
     public $languageUser;
 }

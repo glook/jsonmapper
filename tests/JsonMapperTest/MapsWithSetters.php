@@ -1,4 +1,5 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 class MapsWithSetters
 {
@@ -25,7 +26,7 @@ class MapsWithSetters
     }
 
     /**
-     * @factory MapsWithSetters::factory
+     * @factory glook\jsonmapper\tests\JsonMapperTest\MapsWithSetters::factory
      * @maps factoryValue
      */
     public function setMappedAndFactory($val)

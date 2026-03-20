@@ -1,11 +1,12 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 class ClassWithCtor
 {
     private $attribute_1;
     private $attribute_2;
 
-    public function __construct($attr1, JsonMapperTest_ValueObject $attr2)
+    public function __construct($attr1, ValueObject $attr2)
     {
         $this->attribute_1 = $attr1;
         $this->attribute_2 = $attr2;

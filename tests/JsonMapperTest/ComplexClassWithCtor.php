@@ -1,4 +1,5 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 class ComplexClassWithCtor
 {

@@ -1,5 +1,5 @@
 <?php
-namespace othernamespace;
+namespace glook\jsonmapper\tests\othernamespace;
 
 class Foo
 {
@@ -10,4 +10,3 @@ class Foo
         $this->name = $name;
     }
 }
-?>

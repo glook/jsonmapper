@@ -1,9 +1,10 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 /**
  * @discriminator type
  */
-class JsonMapperTest_SimpleBaseWithMissingDiscrimType
+class SimpleBaseWithMissingDiscrimType
 {
     public $afield;
 
@@ -13,13 +14,13 @@ class JsonMapperTest_SimpleBaseWithMissingDiscrimType
 
     /**
      * Embedded
-     * @var JsonMapperTest_SimpleBase
+     * @var SimpleBase
      */
     public $embedded;
 
     /**
      * Embedded array
-     * @var JsonMapperTest_SimpleBase[]
+     * @var SimpleBase[]
      */
     public $embeddedArray;
 }

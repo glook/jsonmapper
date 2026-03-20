@@ -1,36 +1,30 @@
 <?php
-namespace namespacetest;
-require_once __DIR__ . '/Unit.php';
-require_once __DIR__ . '/UnitData.php';
-require_once __DIR__ . '/model/User.php';
-require_once __DIR__ . '/model/Group.php';
-require_once __DIR__ . '/model/UserList.php';
-require_once __DIR__ . '/../othernamespace/Programmers.php';
-require_once __DIR__ . '/../othernamespace/Foo.php';
-require_once __DIR__ . '/model/UserWithImports.php';
-require_once __DIR__ . '/model/UserWithGroupImport.php';
+
+namespace glook\jsonmapper\tests\namespacetest;
 
 use glook\jsonmapper\JsonMapper;
 use glook\jsonmapper\JsonMapperException;
-use namespacetest\model\User;
-use namespacetest\model\UserWithImports;
-use namespacetest\model\UserWithGroupImport;
-use othernamespace\Programmers;
+use glook\jsonmapper\tests\namespacetest\model\User;
+use glook\jsonmapper\tests\namespacetest\model\UserWithGroupImport;
+use glook\jsonmapper\tests\namespacetest\model\UserWithImports;
+use glook\jsonmapper\tests\othernamespace\Foo;
+use glook\jsonmapper\tests\othernamespace\Programmers;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \glook\jsonmapper\JsonMapper
  * @covers \glook\jsonmapper\TypeCombination
  * @covers \glook\jsonmapper\JsonMapperException
  */
-class NamespaceTest extends \PHPUnit\Framework\TestCase
+class NamespaceTest extends TestCase
 {
     public function testMapArrayNamespace()
     {
         $mapper = new JsonMapper();
         $json = '{"data":[{"value":"1.2"}]}';
         $res = $mapper->map(json_decode($json), new UnitData());
-        $this->assertInstanceOf('\namespacetest\UnitData', $res);
-        $this->assertInstanceOf('\namespacetest\Unit', $res->data[0]);
+        $this->assertInstanceOf(UnitData::class, $res);
+        $this->assertInstanceOf(Unit::class, $res->data[0]);
     }
 
     public function testMapSimpleArrayNamespace()
@@ -38,8 +32,8 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $mapper = new JsonMapper();
         $json = '{"units":[{"value":"1.2"}]}';
         $res = $mapper->map(json_decode($json), new UnitData());
-        $this->assertInstanceOf('\namespacetest\UnitData', $res);
-        $this->assertInstanceOf('\namespacetest\Unit', $res->units[0]);
+        $this->assertInstanceOf(UnitData::class, $res);
+        $this->assertInstanceOf(Unit::class, $res->units[0]);
     }
 
     public function testMapSimpleStringArrayNamespace()
@@ -47,7 +41,7 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $mapper = new JsonMapper();
         $json = '{"messages":["message 1", "message 2"]}';
         $res = $mapper->map(json_decode($json), new UnitData());
-        $this->assertInstanceOf('\namespacetest\UnitData', $res);
+        $this->assertInstanceOf(UnitData::class, $res);
         $this->assertNotNull($res->messages);
         $this->assertCount(2, $res->messages);
     }
@@ -57,8 +51,8 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $mapper = new JsonMapper();
         $json = '{"user":{"name": "John Smith"}}';
         $res = $mapper->map(json_decode($json), new UnitData());
-        $this->assertInstanceOf('\namespacetest\UnitData', $res);
-        $this->assertInstanceOf('\namespacetest\model\User', $res->user);
+        $this->assertInstanceOf(UnitData::class, $res);
+        $this->assertInstanceOf(User::class, $res->user);
     }
 
     public function testMapChildClassConstructorNamespace()
@@ -66,27 +60,27 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $mapper = new JsonMapper();
         $json = '{"user":"John Smith"}';
         $res = $mapper->map(json_decode($json), new UnitData());
-        $this->assertInstanceOf('\namespacetest\UnitData', $res);
-        $this->assertInstanceOf('\namespacetest\model\User', $res->user);
+        $this->assertInstanceOf(UnitData::class, $res);
+        $this->assertInstanceOf(User::class, $res->user);
     }
 
     public function testMapChildObjectArrayNamespace()
     {
         $mapper = new JsonMapper();
         $json = '{"data":null,"user":{"name": "John Smith"}}';
-        /* @var \namespacetest\UnitData $res */
+        /* @var UnitData $res */
         $res = $mapper->map(json_decode($json), new UnitData());
         $this->assertNull($res->data);
-        $this->assertInstanceOf('\namespacetest\model\User', $res->user);
+        $this->assertInstanceOf(User::class, $res->user);
     }
 
     public function testMapEmpty()
     {
         $this->expectException(JsonMapperException::class);
-        $this->expectExceptionMessage("Empty type at property 'namespacetest\UnitData::\$empty'");
+        $this->expectExceptionMessage("Empty type at property 'glook\\jsonmapper\\tests\\namespacetest\\UnitData::\$empty'");
         $mapper = new JsonMapper();
         $json = '{"empty":{}}';
-        /* @var \namespacetest\UnitData $res */
+        /* @var UnitData $res */
         $res = $mapper->map(json_decode($json), new UnitData());
     }
 
@@ -95,9 +89,9 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $mapper = new JsonMapper();
         $json = '{"users":[{"user":"John Smith"}]}';
         $res = $mapper->map(json_decode($json), new UnitData());
-        $this->assertInstanceOf('\namespacetest\UnitData', $res);
-        $this->assertInstanceOf('\namespacetest\model\UserList', $res->users);
-        $this->assertInstanceOf('\namespacetest\model\User', $res->users[0]);
+        $this->assertInstanceOf(UnitData::class, $res);
+        $this->assertInstanceOf(model\UserList::class, $res->users);
+        $this->assertInstanceOf(User::class, $res->users[0]);
     }
 
     /**
@@ -109,9 +103,9 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $mapper = new JsonMapper();
         $json = '{"namespacedTypeHint":"Foo"}';
         $res = $mapper->map(json_decode($json), new UnitData());
-        $this->assertInstanceOf('\namespacetest\UnitData', $res);
+        $this->assertInstanceOf(UnitData::class, $res);
         $this->assertInstanceOf(
-            '\othernamespace\Foo', $res->internalData['namespacedTypeHint']
+            Foo::class, $res->internalData['namespacedTypeHint']
         );
         $this->assertEquals(
             'Foo', $res->internalData['namespacedTypeHint']->name
@@ -175,7 +169,7 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $res = $mapper->map(
             json_decode($json), new UserWithImports()
         );
-        $this->assertInstanceOf('\othernamespace\Foo', $res->foo);
+        $this->assertInstanceOf(Foo::class, $res->foo);
         $this->assertEquals('bar', $res->foo->name);
     }
 
@@ -189,7 +183,7 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $res = $mapper->map(
             json_decode($json), new UserWithImports()
         );
-        $this->assertInstanceOf('\othernamespace\Foo', $res->aliasedFoo);
+        $this->assertInstanceOf(Foo::class, $res->aliasedFoo);
         $this->assertEquals('baz', $res->aliasedFoo->name);
     }
 
@@ -204,7 +198,7 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
             json_decode($json), new UserWithImports()
         );
         $this->assertCount(2, $res->fooArray);
-        $this->assertInstanceOf('\othernamespace\Foo', $res->fooArray[0]);
+        $this->assertInstanceOf(Foo::class, $res->fooArray[0]);
         $this->assertEquals('a', $res->fooArray[0]->name);
         $this->assertEquals('b', $res->fooArray[1]->name);
     }
@@ -221,7 +215,7 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $res = $mapper->map(
             json_decode($json), new UserWithGroupImport()
         );
-        $this->assertInstanceOf('\othernamespace\Foo', $res->foo);
+        $this->assertInstanceOf(Foo::class, $res->foo);
         $this->assertEquals('grouped', $res->foo->name);
     }
 
@@ -233,7 +227,7 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $mapper = new JsonMapper();
         $json = '{"user":{"name": "Jane"}}';
         $res = $mapper->map(json_decode($json), new UnitData());
-        $this->assertInstanceOf('\namespacetest\model\User', $res->user);
+        $this->assertInstanceOf(User::class, $res->user);
         $this->assertEquals('Jane', $res->user->name);
     }
 
@@ -256,8 +250,24 @@ class NamespaceTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('DateTime', $imports);
         $this->assertEquals('\DateTime', $imports['DateTime']);
         $this->assertArrayHasKey('Foo', $imports);
-        $this->assertEquals('\othernamespace\Foo', $imports['Foo']);
+        $this->assertEquals('\\' . Foo::class, $imports['Foo']);
         $this->assertArrayHasKey('AliasedFoo', $imports);
-        $this->assertEquals('\othernamespace\Foo', $imports['AliasedFoo']);
+        $this->assertEquals('\\' . Foo::class, $imports['AliasedFoo']);
     }
+
+    public function testUseImportSameNamespace()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"project":{"name":"baz"}}';
+        $res = $mapper->map(
+            json_decode($json), new UserWithImports()
+        );
+
+
+        $this->assertInstanceOf(model\Project::class, $res->project);
+        $this->assertEquals('baz', $res->project->name);
+    }
+
+
+
 }

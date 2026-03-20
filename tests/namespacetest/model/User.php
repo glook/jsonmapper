@@ -1,5 +1,5 @@
 <?php
-namespace namespacetest\model;
+namespace glook\jsonmapper\tests\namespacetest\model;
 
 class User
 {
@@ -11,5 +11,3 @@ class User
         $this->name = $name;
     }
 }
-
-?>

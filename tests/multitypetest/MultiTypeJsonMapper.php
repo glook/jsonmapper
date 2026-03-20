@@ -1,6 +1,6 @@
 <?php
 
-namespace multitypetest;
+namespace glook\jsonmapper\tests\multitypetest;
 
 use glook\jsonmapper\JsonMapper;
 

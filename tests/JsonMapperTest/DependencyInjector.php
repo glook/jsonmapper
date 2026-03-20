@@ -1,5 +1,9 @@
 <?php
-class JsonMapperTest_DependencyInjector extends \glook\jsonmapper\JsonMapper
+namespace glook\jsonmapper\tests\JsonMapperTest;
+
+use glook\jsonmapper\JsonMapper;
+
+class DependencyInjector extends JsonMapper
 {
     /**
      * Create a new object of the given type.
@@ -24,4 +28,3 @@ class JsonMapperTest_DependencyInjector extends \glook\jsonmapper\JsonMapper
         return $object;
     }
 }
-?>

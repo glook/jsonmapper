@@ -1,4 +1,5 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 class PrivateWithSetter
 {
@@ -47,4 +48,3 @@ class PrivateWithSetter
         return $this->privateProperty;
     }
 }
-?>
