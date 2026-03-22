@@ -255,6 +255,57 @@ class NamespaceTest extends TestCase
         $this->assertEquals('\\' . Foo::class, $imports['AliasedFoo']);
     }
 
+    /**
+     * Test that @var ArrayObject with use ArrayObject resolves via use-import
+     * in a namespaced class.
+     */
+    public function testUseImportArrayObject()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"items":[{"name":"a"},{"name":"b"}]}';
+        $res = $mapper->map(
+            json_decode($json), new model\UserWithArrayObject()
+        );
+        $this->assertInstanceOf(\ArrayObject::class, $res->items);
+        $this->assertCount(2, $res->items);
+        $this->assertInstanceOf(\stdClass::class, $res->items[0]);
+        $this->assertEquals('a', $res->items[0]->name);
+    }
+
+    /**
+     * Test that @var ArrayObject[User] with use ArrayObject resolves typed
+     * ArrayObject via use-import in a namespaced class.
+     */
+    public function testUseImportTypedArrayObject()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"typedItems":[{"name":"Alice"},{"name":"Bob"}]}';
+        $res = $mapper->map(
+            json_decode($json), new model\UserWithArrayObject()
+        );
+        $this->assertInstanceOf(\ArrayObject::class, $res->typedItems);
+        $this->assertCount(2, $res->typedItems);
+        $this->assertInstanceOf(model\User::class, $res->typedItems[0]);
+        $this->assertEquals('Alice', $res->typedItems[0]->name);
+    }
+
+    /**
+     * Test that @var ArrayObject[int] with use ArrayObject resolves simple-typed
+     * ArrayObject via use-import in a namespaced class.
+     */
+    public function testUseImportSimpleArrayObject()
+    {
+        $mapper = new JsonMapper();
+        $json = '{"simpleItems":{"a":"1","b":"2"}}';
+        $res = $mapper->map(
+            json_decode($json), new model\UserWithArrayObject()
+        );
+        $this->assertInstanceOf(\ArrayObject::class, $res->simpleItems);
+        $this->assertCount(2, $res->simpleItems);
+        $this->assertTrue(is_int($res->simpleItems['a']));
+        $this->assertEquals(1, $res->simpleItems['a']);
+    }
+
     public function testUseImportSameNamespace()
     {
         $mapper = new JsonMapper();
