@@ -1,1 +1,6 @@
 **/*.php -lf
+
+tests export-ignore
+example export-ignore
+phpunit.xml export-ignore
+package.xml export-ignore
