@@ -1,6 +1,6 @@
 <?php
 
-namespace multitypetest\model;
+namespace glook\jsonmapper\tests\multitypetest\model;
 
 use stdClass;
 
@@ -111,7 +111,7 @@ class Employee extends Person implements \JsonSerializable
      *
      * @required
      * @maps hiredAt
-     * @factory multitypetest\model\DateTimeHelper::fromRfc1123DateTime
+     * @factory glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::fromRfc1123DateTime
      */
     public function setHiredAt($hiredAt)
     {

@@ -1,26 +1,10 @@
 <?php
-/**
- * Part of JsonMapper
- *
- * PHP version 5
- *
- * @category Netresearch
- * @package  JsonMapper
- * @author   Christian Weiske <christian.weiske@netresearch.de>
- * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
- * @link     http://www.netresearch.de/
- */
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 /**
  * Unit test helper class for testing property mapping
- *
- * @category Netresearch
- * @package  JsonMapper
- * @author   Christian Weiske <christian.weiske@netresearch.de>
- * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
- * @link     http://www.netresearch.de/
  */
-class JsonMapperTest_Simple
+class Simple
 {
     /**
      * @var bool
@@ -82,7 +66,7 @@ class JsonMapperTest_Simple
      */
     protected $protectedStrNoSetter;
     /**
-     * @var JsonMapperTest_Simple
+     * @var Simple
      */
     public $simple;
 
@@ -106,17 +90,17 @@ class JsonMapperTest_Simple
 
     /**
      * Value object which needs to be set as an instance (without mapping)
-     * @var JsonMapperTest_ValueObject
+     * @var ValueObject
      */
     public $valueObject;
 
-    public function setSimpleSetterOnlyTypeHint(JsonMapperTest_Simple $s)
+    public function setSimpleSetterOnlyTypeHint(Simple $s)
     {
         $this->internalData['typehint'] = $s;
     }
 
     /**
-     * @param JsonMapperTest_Simple $s Some test object
+     * @param Simple $s Some test object
      */
     public function setSimpleSetterOnlyDocblock($s)
     {
@@ -144,7 +128,7 @@ class JsonMapperTest_Simple
     }
 
     /**
-     * @return JsonMapperTest_ValueObject
+     * @return ValueObject
      */
     public function getValueObject()
     {
@@ -152,9 +136,9 @@ class JsonMapperTest_Simple
     }
 
     /**
-     * @param JsonMapperTest_ValueObject $valueObject
+     * @param ValueObject $valueObject
      */
-    public function setValueObject(JsonMapperTest_ValueObject $valueObject)
+    public function setValueObject(ValueObject $valueObject)
     {
         $this->valueObject = $valueObject;
     }
@@ -177,7 +161,7 @@ class JsonMapperTest_Simple
 
     /**
      * @param string $key
-     * @param JsonMapperTest_Simple $value
+     * @param Simple $value
      */
     public function addCustomTypedAdditionalProperty($key, $value)
     {
@@ -185,7 +169,7 @@ class JsonMapperTest_Simple
     }
 
     /**
-     * @factory FactoryMethod::createFromInt
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createFromInt
      *
      * @param string $key
      * @param bool $value
@@ -208,8 +192,8 @@ class JsonMapperTest_Simple
 
     /**
      * @mapsBy anyOf(int,bool)
-     * @factory FactoryMethod::createFromIntStrict int
-     * @factory FactoryMethod::createFromBoolStrict bool
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createFromIntStrict int
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createFromBoolStrict bool
      *
      * @param string $key
      * @param int|bool $value
@@ -229,4 +213,3 @@ class JsonMapperTest_Simple
         $this->additional[] = $value;
     }
 }
-?>

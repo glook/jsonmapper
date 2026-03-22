@@ -1,7 +1,6 @@
 <?php
 
-namespace multitypetest\model;
-require_once __DIR__ . '/DateTimeHelper.php';
+namespace glook\jsonmapper\tests\multitypetest\model;
 
 use stdClass;
 
@@ -45,8 +44,8 @@ class ComplexCaseA implements \JsonSerializable
      * @required
      * @maps value
      * @mapsBy oneOf(DateTime[],anyOf(DateTime,string),ComplexCaseA)
-     * @factory multitypetest\model\DateTimeHelper::fromSimpleDate DateTime
-     * @factory multitypetest\model\DateTimeHelper::fromSimpleDateArray DateTime[]
+     * @factory glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::fromSimpleDate DateTime
+     * @factory glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::fromSimpleDateArray DateTime[]
      */
     public function setValue($value)
     {

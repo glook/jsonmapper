@@ -1,7 +1,7 @@
 <?php
-namespace namespacetest\model;
+namespace glook\jsonmapper\tests\namespacetest\model;
 
-use othernamespace\{Foo, Programmers};
+use glook\jsonmapper\tests\othernamespace\{Foo, Programmers};
 
 class UserWithGroupImport
 {

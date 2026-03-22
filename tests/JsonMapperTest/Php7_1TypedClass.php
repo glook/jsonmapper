@@ -1,13 +1,12 @@
 <?php
-
-require_once 'ValueObject.php';
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 class Php7_1TypedClass
 {
     private $nullableArray;
 
     /**
-     * @param JsonMapperTest_ValueObject[]|null $val
+     * @param ValueObject[]|null $val
      */
     public function setNullableArray(?array $val)
     {

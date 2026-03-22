@@ -1,6 +1,6 @@
 <?php
 
-namespace multitypetest\model;
+namespace glook\jsonmapper\tests\multitypetest\model;
 
 use stdClass;
 
@@ -110,7 +110,7 @@ class Person implements \JsonSerializable
      *
      * @required
      * @maps birthday
-     * @factory multitypetest\model\DateTimeHelper::fromSimpleDate
+     * @factory glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::fromSimpleDate
      */
     public function setBirthday($birthday)
     {
@@ -130,7 +130,7 @@ class Person implements \JsonSerializable
      *
      * @required
      * @maps birthtime
-     * @factory multitypetest\model\DateTimeHelper::fromRfc3339DateTime
+     * @factory glook\jsonmapper\tests\multitypetest\model\DateTimeHelper::fromRfc3339DateTime
      */
     public function setBirthtime($birthtime)
     {

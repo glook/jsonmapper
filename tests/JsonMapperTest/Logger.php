@@ -1,26 +1,10 @@
 <?php
-/**
- * Part of JsonMapper
- *
- * PHP version 5
- *
- * @category Netresearch
- * @package  JsonMapper
- * @author   Christian Weiske <christian.weiske@netresearch.de>
- * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
- * @link     http://www.netresearch.de/
- */
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 /**
  * Simple in-memory logger
- *
- * @category Netresearch
- * @package  JsonMapper
- * @author   Christian Weiske <christian.weiske@netresearch.de>
- * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
- * @link     http://www.netresearch.de/
  */
-class JsonMapperTest_Logger
+class Logger
 {
     public $log = array();
 
@@ -38,4 +22,3 @@ class JsonMapperTest_Logger
         $this->log[] = array($level, $message, $context);
     }
 }
-?>

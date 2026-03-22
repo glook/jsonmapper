@@ -1,4 +1,5 @@
 <?php
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 use glook\jsonmapper\JsonMapper;
 

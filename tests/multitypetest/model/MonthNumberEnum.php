@@ -1,6 +1,6 @@
 <?php
 
-namespace multitypetest\model;
+namespace glook\jsonmapper\tests\multitypetest\model;
 
 use Exception;
 use stdClass;

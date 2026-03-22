@@ -1,22 +1,8 @@
 <?php
-/**
- * Part of JsonMapper
- *
- * PHP version 5
- *
- * @package  JsonMapper
- * @author   Mehdi Raza <mehdi.jaffery@apimatic.io>
- * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
- * @link     https://apimatic.io/
- */
+namespace glook\jsonmapper\tests\JsonMapperTest;
 
 /**
  * Unit test helper class for testing property mapping
- *
- * @package  JsonMapper
- * @author   Mehdi Raza <mehdi.jaffery@apimatic.io>
- * @license  OSL-3.0 http://opensource.org/licenses/osl-3.0
- * @link     https://apimatic.io/
  */
 class FactoryMethod
 {
@@ -28,45 +14,45 @@ class FactoryMethod
     public $simple;
 
     /**
-     * @factory FactoryMethod::createFromValue
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createFromValue
      */
     public $value;
 
     /**
      * @var bool
-     * @factory FactoryMethod::createFromInt
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createFromInt
      */
     public $bool;
 
     /**
-     * @factory FactoryMethod::createFromTimestamp
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createFromTimestamp
      */
     public $datetime;
 
     /**
-     * @factory FactoryMethod::createObjectFromValue
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createObjectFromValue
      */
     public $object;
 
     /**
-     * @factory FactoryMethod::createObjectFromValue
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createObjectFromValue
      */
     public $objObj;
 
     /**
      * @var int[]
-     * @factory FactoryMethod::createArrayFromArray
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createArrayFromArray
      */
     public $array;
 
     /**
      * @var int
-     * @factory FactoryMethod::createValueFromArray
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createValueFromArray
      */
     public $valueArr;
 
     /**
-     * @factory FactoryMethod::createFromValue
+     * @factory glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::createFromValue
      */
     public function setPrivateValue($val)
     {
@@ -86,7 +72,7 @@ class FactoryMethod
     public static function createFromBoolStrict($value)
     {
         if (!is_bool($value)) {
-            throw new InvalidArgumentException('Only boolean types are allowed');
+            throw new \InvalidArgumentException('Only boolean types are allowed');
         }
         return 'value is ' . $value;
     }
@@ -99,30 +85,30 @@ class FactoryMethod
     public static function createFromIntStrict($value)
     {
         if (!is_numeric($value)) {
-            throw new InvalidArgumentException('Only integer types are allowed');
+            throw new \InvalidArgumentException('Only integer types are allowed');
         }
         return $value === 1;
     }
 
     public static function createFromTimestamp($value)
     {
-        return new DateTime('@' . $value);
+        return new \DateTime('@' . $value);
     }
 
     public static function createObjectFromValue($value)
     {
-        return new JsonMapperTest_ValueObject($value);
+        return new ValueObject($value);
     }
 
     public static function createArrayFromArray($value)
     {
-        return array_map('FactoryMethod::cube', $value);
+        return array_map('glook\jsonmapper\tests\JsonMapperTest\FactoryMethod::cube', $value);
     }
 
     public static function createValueFromArray($value)
     {
         $val = 0;
-        for ($i=0; $i < count($value); $i++) { 
+        for ($i=0; $i < count($value); $i++) {
             $val += $value[$i];
         }
         return $val;
@@ -133,4 +119,3 @@ class FactoryMethod
         return($n * $n);
     }
 }
-?>
