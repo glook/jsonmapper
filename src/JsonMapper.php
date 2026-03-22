@@ -617,7 +617,11 @@ class JsonMapper
             return array($this->createInstance($propType), $subtype, $dimension);
         }
 
-        if ($type == 'ArrayObject' || is_subclass_of($type, 'ArrayObject')) {
+        if (!$this->isSimpleType($type)) {
+            $type = $this->getFullNamespace($type, $namespace);
+        }
+
+        if ($type == '\ArrayObject' || is_subclass_of($type, '\ArrayObject')) {
             return array($this->createInstance($type), null, $dimension);
         }
 
